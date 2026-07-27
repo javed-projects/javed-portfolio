@@ -32,13 +32,7 @@ interface HoverExpand_002Props {
   className?: string;
 }
 
-const getCredentialId = (url?: string): string => {
-  if (!url) return "";
-  const parts = url.split("/");
-  return parts[parts.length - 1] || "";
-};
-
-const DigitalCertificatePreview = ({ image }: { image: Certificate }) => {
+const DigitalCertificatePreview = React.memo(function DigitalCertificatePreview({ image }: { image: Certificate }) {
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
 
@@ -148,7 +142,7 @@ const DigitalCertificatePreview = ({ image }: { image: Certificate }) => {
       </div>
     </div>
   );
-};
+});
 
 /* --- CLEAN CERTIFICATE MODAL COMPONENT --- */
 interface CertificateModalProps {
@@ -156,7 +150,7 @@ interface CertificateModalProps {
   onClose: () => void;
 }
 
-const CertificateModal = ({ certificate, onClose }: CertificateModalProps) => {
+const CertificateModal = React.memo(function CertificateModal({ certificate, onClose }: CertificateModalProps) {
   if (!certificate) return null;
 
   const [activeImgSrc, setActiveImgSrc] = useState<string | null>(null);
@@ -221,7 +215,7 @@ const CertificateModal = ({ certificate, onClose }: CertificateModalProps) => {
       </motion.div>
     </motion.div>
   );
-};
+});
 
 const HoverExpand_002 = ({
   images,

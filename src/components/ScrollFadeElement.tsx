@@ -8,7 +8,7 @@ interface ScrollFadeElementProps {
   as?: 'h1' | 'h2' | 'div';
 }
 
-export default function ScrollFadeElement({ children, className = '', id, as = 'h2' }: ScrollFadeElementProps) {
+const ScrollFadeElement = React.memo(function ScrollFadeElement({ children, className = '', id, as = 'h2' }: ScrollFadeElementProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Track the scroll position of the element relative to the viewport
@@ -27,12 +27,16 @@ export default function ScrollFadeElement({ children, className = '', id, as = '
     [0.85, 1, 1, 0.85]
   );
 
-  let Component: any = motion.h2;
-  if (as === 'h1') {
-    Component = motion.h1;
-  } else if (as === 'div') {
-    Component = motion.div;
-  }
+  const Component = React.useMemo(() => {
+    switch (as) {
+      case "h1":
+        return motion.h1;
+      case "div":
+        return motion.div;
+      default:
+        return motion.h2;
+    }
+  }, [as]);
 
   return (
     <div ref={containerRef} className="w-full overflow-visible">
@@ -48,4 +52,6 @@ export default function ScrollFadeElement({ children, className = '', id, as = '
       </Component>
     </div>
   );
-}
+});
+
+export default ScrollFadeElement;

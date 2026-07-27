@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { StarsBackground } from "./stars-background";
-import { ShootingStars } from "./shooting-stars";
+import React, { useState } from "react";
+import { motion } from "motion/react";
+
 
 export interface PerspectiveCarouselItem {
   src?: string;
@@ -50,13 +48,10 @@ export function PerspectiveCarousel({
   };
 
   const handleCardClick = (index: number) => {
-    console.log("Carousel: Card clicked", index, "current activeIndex", activeIndex);
     if (onCardClick) {
-      console.log("Carousel: Calling onCardClick for index", index);
       onCardClick(index);
     }
     if (index !== activeIndex) {
-      console.log("Carousel: Calling handleIndexChange for index", index);
       handleIndexChange(index);
     }
   };
@@ -88,11 +83,7 @@ export function PerspectiveCarousel({
     <div
       className={`relative w-full flex flex-col items-center justify-between overflow-hidden py-6 px-4 select-none ${className}`}
     >
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <StarsBackground className="opacity-50" />
-        <ShootingStars className="pointer-events-none opacity-80" />
-       
-      </div>
+   
 
       {/* 3D Track Viewport (dynamically sized to match the cards exactly to prevent any overflow or overlap) */}
       <div 

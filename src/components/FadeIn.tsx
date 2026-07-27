@@ -13,7 +13,7 @@ interface FadeInProps {
   key?: React.Key;
 }
 
-export default function FadeIn({
+const FadeIn = React.memo(function FadeIn({
   children,
   delay = 0,
   duration = 0.7,
@@ -24,7 +24,10 @@ export default function FadeIn({
   id,
 }: FadeInProps) {
   // Use static motion elements to prevent recreating component types and causing unmounts/layout shifts on every render
-  const Component = (motion as any)[as] || motion.div;
+  const Component = React.useMemo(
+    () => (motion as any)[as] || motion.div,
+    [as]
+  );
 
   return (
     <Component
@@ -43,4 +46,6 @@ export default function FadeIn({
       {children}
     </Component>
   );
-}
+});
+
+export default FadeIn;

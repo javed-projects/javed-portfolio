@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { useScroll } from 'motion/react';
 
 interface AnimatedTextProps {
@@ -15,7 +15,7 @@ export default function AnimatedText({ text, className = "", id }: AnimatedTextP
     offset: ['start 0.8', 'end 0.2'],
   });
 
-  const words = text.split(' ');
+  const words = useMemo(() => text.split(' '), [text]);
   const totalChars = text.length;
 
   // Track global character index to keep animation synchronized perfectly
@@ -99,7 +99,11 @@ interface CharacterProps {
   key?: React.Key;
 }
 
-function Character({ char, index, total }: CharacterProps) {
+const Character = React.memo(function Character({
+  char,
+  index,
+  total,
+}: CharacterProps) {
   // Map index to a portion of scroll space
   // We use a small window size so that characters fade in progressively,
   // creating a beautiful wave effect.
@@ -115,8 +119,6 @@ function Character({ char, index, total }: CharacterProps) {
           ['--start' as any]: start.toFixed(4),
           ['--end' as any]: end.toFixed(4),
           opacity: 'clamp(0.2, calc(0.2 + 0.8 * (var(--scroll-progress, 0) - var(--start)) / (var(--end) - var(--start))), 1)',
-          willChange: 'opacity',
-          transform: 'translateZ(0)',
         }}
         className="absolute left-0 top-0 select-none"
       >
@@ -124,5 +126,4 @@ function Character({ char, index, total }: CharacterProps) {
       </span>
     </span>
   );
-}
-
+});

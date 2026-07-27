@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Crosshair, 
@@ -437,22 +443,33 @@ export default function ProjectsSection() {
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
+      let newCardWidth = 240;
+      let newGap = 24;
+
       if (width < 640) {
-        setDimensions({
-          cardWidth: 140,
-          gap: 10,
-        });
+        newCardWidth = 140;
+        newGap = 10;
       } else if (width < 1024) {
-        setDimensions({
-          cardWidth: 200,
-          gap: 16,
-        });
+        newCardWidth = 200;
+        newGap = 16;
       } else {
-        setDimensions({
-          cardWidth: 240,
-          gap: 24,
-        });
+        newCardWidth = 240;
+        newGap = 24;
       }
+
+      setDimensions(prev => {
+        if (
+          prev.cardWidth === newCardWidth &&
+          prev.gap === newGap
+        ) {
+          return prev;
+        }
+
+        return {
+          cardWidth: newCardWidth,
+          gap: newGap,
+        };
+      });
     };
 
     window.addEventListener('resize', handleResize);
@@ -464,13 +481,15 @@ export default function ProjectsSection() {
   }, []);
 
   // Triggers slide target index alignment and centers card
-  const handleCardClick = (index: number) => {
+  const handleCardClick = useCallback((index: number) => {
     if (index === activeIndex) {
       setSelectedProject(PROJECTS[index]);
     } else {
       setActiveIndex(index);
     }
-  };
+  }, [activeIndex]);
+
+  const carouselItems = useMemo(() => PROJECTS, []);
 
   return (
     <section
@@ -498,7 +517,7 @@ export default function ProjectsSection() {
         {/* 3D Curved Carousel stage & navigational controls */}
         <div className="w-full max-w-5xl z-20">
           <PerspectiveCarousel
-            items={PROJECTS}
+            items={carouselItems}
             activeIndex={activeIndex}
             onChangeActiveIndex={setActiveIndex}
             onCardClick={handleCardClick}

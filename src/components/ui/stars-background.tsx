@@ -1,10 +1,18 @@
 "use client";
+
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+interface Star {
+  x: number;
+  y: number;
+  radius: number;
+  opacity: number;
 }
 
 export const StarsBackground = ({ className }: { className?: string }) => {
@@ -13,41 +21,68 @@ export const StarsBackground = ({ className }: { className?: string }) => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let stars: { x: number; y: number; radius: number; opacity: number }[] = [];
+    let stars: Star[] = [];
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+      for (const star of stars) {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${star.opacity})`;
+        ctx.fill();
+      }
+    };
+
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      stars = Array.from({ length: Math.floor(window.innerWidth * window.innerHeight * 0.0003) }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const starCount = Math.floor((rect.width * rect.height) * 0.0003);
+
+      stars = Array.from({ length: starCount }, () => ({
+        x: Math.random() * rect.width,
+        y: Math.random() * rect.height,
         radius: Math.random() * 0.8 + 0.6,
         opacity: Math.random() * 0.6 + 0.4,
       }));
-    };
-    resize();
-    window.addEventListener("resize", resize);
 
-    let frameId: number;
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      stars.forEach((star) => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
-        ctx.fill();
-      });
-      frameId = requestAnimationFrame(render);
+      draw();
     };
-    render();
+
+    resize();
+
+    const parent = canvas.parentElement;
+
+    const observer = new ResizeObserver(() => {
+      resize();
+    });
+
+    if (parent) {
+      observer.observe(parent);
+    }
 
     return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(frameId);
+      observer.disconnect();
     };
   }, []);
 
-  return <canvas ref={canvasRef} className={cn("h-full w-full absolute inset-0 pointer-events-none", className)} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className={cn(
+        "absolute inset-0 w-full h-full pointer-events-none",
+        className
+      )}
+    />
+  );
 };
