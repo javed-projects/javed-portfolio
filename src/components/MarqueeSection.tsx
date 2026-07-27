@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 
 const ROW_1_IMAGES = [
-  '/certificates/project1.jpeg',
-  '/certificates/project2.jpeg',
-  '/certificates/project3.jpeg',
+  '/certificates/project1.webp',
+  '/certificates/project2.webp',
+  '/certificates/project3.webp',
 ];
 
 const ROW_2_IMAGES = [
-  '/certificates/project5.jpeg',
-  '/certificates/project6.jpeg',
-  '/certificates/project7.jpeg',
+  '/certificates/project5.webp',
+  '/certificates/project6.webp',
+  '/certificates/project7.webp',
 ];
 
 // Tripling the images for a seamless scrolling effect
