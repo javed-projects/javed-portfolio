@@ -39,7 +39,7 @@ export default function HeroSection() {
               className="w-[280px] sm:w-[360px] md:w-[450px] lg:w-[520px] h-auto"
             >
               <img
-                src="/certificates/face.png"
+                src="/certificates/face.webp"
                 alt="Javed - 3D Creator Portrait"
                 className="w-full h-auto object-contain select-none pointer-events-none bg-transparent drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]"
                 referrerPolicy="no-referrer"

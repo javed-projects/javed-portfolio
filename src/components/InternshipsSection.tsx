@@ -54,7 +54,7 @@ const CERTIFICATES: Certificate[] = [
   'Forensic technology'],
     signatureName: 'Tina McCreery',
     signatureTitle: 'Chief Human Resources Officer, Deloitte',
-    imageUrl: '/certificates/deloitte data analytics job simulation.png',
+    imageUrl: '/certificates/deloitte data analytics job simulation.webp',
   },
   {
     id: 'tata-genai',
@@ -81,7 +81,7 @@ const CERTIFICATES: Certificate[] = [
     ],
     signatureName: 'Tom Brunskill',
     signatureTitle: 'CEO, Co-Founder of Forage',
-    imageUrl: '/certificates/tata genai powered data analytics job simulation.png',
+    imageUrl: '/certificates/tata genai powered data analytics job simulation.webp',
   },
   {
     id: 'tata-dv',
@@ -108,7 +108,7 @@ const CERTIFICATES: Certificate[] = [
     ],
     signatureName: 'Tom Brunskill',
     signatureTitle: 'CEO, Co-Founder of Forage',
-    imageUrl: '/certificates/tata data visualisation.png',
+    imageUrl: '/certificates/tata data visualisation.webp',
   },
   {
     id: 'gs-ops',
@@ -133,7 +133,7 @@ const CERTIFICATES: Certificate[] = [
     ],
     signatureName: 'Tom Brunskill',
     signatureTitle: 'CEO, Co-Founder of Forage',
-    imageUrl: '/certificates/goldman sach operations job simulation.png',
+    imageUrl: '/certificates/goldman sach operations job simulation.webp',
   }
 ];
 
@@ -960,7 +960,7 @@ export default function InternshipsSection() {
                       boxShadow: absN < 0.85 ? `0 20px 45px -10px rgba(0,0,0,0.85), 0 0 45px -15px ${cert.color}25` : 'none',
                     }}
                   >
-                   <CertificateDisplay cert={cert} mode="portrait" />
+                    <CertificateDisplay cert={cert} mode="portrait" />
                     
                     {/* Glowing neon card border highlight */}
                     <div className="absolute inset-0 rounded-2xl pointer-events-none border border-white/5 group-hover:border-white/20 transition-all duration-500" />

@@ -13,15 +13,13 @@ import { ShootingStars } from './components/ui/shooting-stars';
 
 export default function App() {
   return (
-    <div 
+    <div
       className="bg-[#0C0C0C] min-h-screen text-[#D7E2EA] font-sans antialiased selection:bg-[#B600A8] selection:text-white relative"
       style={{ overflowX: 'clip' }}
     >
-      {/* Global Background Effects (Fixed Layer visible across all sections) */}
       <StarsBackground className="fixed inset-0 z-0 opacity-70 pointer-events-none" />
       <ShootingStars className="fixed inset-0 z-0 opacity-90 pointer-events-none" />
 
-      {/* Content Sections Wrapper */}
       <div className="relative z-10">
         <HeroSection />
         <MarqueeSection />

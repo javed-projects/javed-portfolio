@@ -481,8 +481,6 @@ export default function ProjectsSection() {
         <StarsBackground className="z-0 opacity-60" />
         <ShootingStars className="pointer-events-none z-10 opacity-90" />
         <div className="absolute inset-0 bg-[#0C0C0C]/35 z-10 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#FF529E]/3 rounded-full blur-[150px] pointer-events-none z-0" />
-        <div className="absolute -bottom-40 left-10 w-[400px] h-[400px] bg-[#00F2FE]/4 rounded-full blur-[130px] pointer-events-none z-0" />
       </div>
 
       {/* Viewport content */}

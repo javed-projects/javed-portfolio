@@ -91,7 +91,7 @@ export function PerspectiveCarousel({
       <div className="absolute inset-0 pointer-events-none z-0">
         <StarsBackground className="opacity-50" />
         <ShootingStars className="pointer-events-none opacity-80" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,82,158,0.16),transparent_55%)]" />
+       
       </div>
 
       {/* 3D Track Viewport (dynamically sized to match the cards exactly to prevent any overflow or overlap) */}

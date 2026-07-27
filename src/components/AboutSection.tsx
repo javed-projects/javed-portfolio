@@ -22,7 +22,7 @@ export default function AboutSection() {
         className="absolute top-[4%] left-[1%] sm:left-[2%] md:left-[4%] z-0 pointer-events-none select-none w-[120px] sm:w-[160px] md:w-[210px]"
       >
         <img
-          src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png"
+          src="/about/moon_icon.webp"
           alt="Decorative moon"
           className="w-full h-auto object-contain"
           referrerPolicy="no-referrer"
@@ -38,7 +38,8 @@ export default function AboutSection() {
         className="absolute bottom-[8%] left-[3%] sm:left-[6%] md:left-[10%] z-0 pointer-events-none select-none w-[100px] sm:w-[140px] md:w-[180px]"
       >
         <img
-          src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png"
+         src="/about/p59.webp"
+        
           alt="Decorative crystal element"
           className="w-full h-auto object-contain"
           referrerPolicy="no-referrer"
@@ -54,7 +55,7 @@ export default function AboutSection() {
         className="absolute top-[4%] right-[1%] sm:right-[2%] md:right-[4%] z-0 pointer-events-none select-none w-[120px] sm:w-[160px] md:w-[210px]"
       >
         <img
-          src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png"
+         src="/about/lego_icon.webp"
           alt="Decorative block element"
           className="w-full h-auto object-contain"
           referrerPolicy="no-referrer"
@@ -70,7 +71,7 @@ export default function AboutSection() {
         className="absolute bottom-[8%] right-[3%] sm:right-[6%] md:right-[10%] z-0 pointer-events-none select-none w-[130px] sm:w-[170px] md:w-[220px]"
       >
         <img
-          src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png"
+          src="/about/Group.webp"
           alt="Decorative rings group"
           className="w-full h-auto object-contain"
           referrerPolicy="no-referrer"

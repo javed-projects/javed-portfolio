@@ -17,7 +17,7 @@ const CERTIFICATE_DATA = [
     ],
     platform: "coursera",
     partner: "IBM",
-    src: "/certificates/Screenshot 2026-07-25 190543.png"
+    src: "/certificates/Screenshot 2026-07-25 190543.webp"
   },
   {
     code: "IBM Excel",
@@ -33,7 +33,7 @@ const CERTIFICATE_DATA = [
     ],
     platform: "coursera",
     partner: "IBM",
-    src: "/certificates/Screenshot 2026-07-25 192223.png"
+    src: "/certificates/Screenshot 2026-07-25 192223.webp"
   },
   {
     code: "IBM SQL",
@@ -49,7 +49,7 @@ const CERTIFICATE_DATA = [
     ],
     platform: "coursera",
     partner: "IBM",
-    src: "/certificates/Screenshot 2026-07-25 190457.png"
+    src: "/certificates/Screenshot 2026-07-25 190457.webp"
   },
   {
     code: "IBM GenAI",
@@ -66,7 +66,7 @@ const CERTIFICATE_DATA = [
     ],
     platform: "coursera",
     partner: "IBM",
-    src: "/certificates/Screenshot 2026-07-25 190515.png"
+    src: "/certificates/Screenshot 2026-07-25 190515.webp"
   },
   {
     code: "IBM Cognos",
@@ -83,7 +83,7 @@ const CERTIFICATE_DATA = [
     ],
     platform: "coursera",
     partner: "IBM",
-    src: "/certificates/Screenshot 2026-07-25 190437.png"
+    src: "/certificates/Screenshot 2026-07-25 190437.webp"
   },
   {
     code: "SAP S4 HANA",
@@ -97,7 +97,7 @@ const CERTIFICATE_DATA = [
       { name: "Supriya Bira", title: "Director, UNIT ERP Academy" }
     ],
     platform: "ldit",
-    src: "/certificates/1753609130428.png"
+    src: "/certificates/1753609130428.webp"
   },
   {
     code: "SAP ECC",
@@ -111,7 +111,7 @@ const CERTIFICATE_DATA = [
       { name: "Supriya Bira", title: "Director, UNIT ERP Academy" }
     ],
     platform: "ldit",
-    src: "/certificates/1753609160573.png"
+    src: "/certificates/1753609160573.webp"
   },
   {
     code: "ADFAP",
@@ -128,7 +128,7 @@ const CERTIFICATE_DATA = [
       }
     ],
     platform: "tally",
-    src: "/certificates/advanced-diploma-finance-accounting.png"
+    src: "/certificates/advanced-diploma-finance-accounting.webp"
   },
   {
     code: "Skill India",
@@ -143,7 +143,7 @@ const CERTIFICATE_DATA = [
       { name: "Sindhu Gangadharan", title: "Chairperson, IT-ITeS SSC NASSCOM" }
     ],
     platform: "skillindia",
-    src: "/certificates/Screenshot 2026-07-25 190417.png"
+    src: "/certificates/Screenshot 2026-07-25 190417.webp"
   },
   {
     code: "SL Excel BI",
@@ -158,7 +158,7 @@ const CERTIFICATE_DATA = [
       { name: "Krishna Kumar", title: "CEO, Simplilearn" }
     ],
     platform: "simplilearn",
-    src: "/certificates/Screenshot 2026-07-25 192312.png"
+    src: "/certificates/Screenshot 2026-07-25 192312.webp"
   },
   {
     code: "SL GenAI",
@@ -173,7 +173,7 @@ const CERTIFICATE_DATA = [
       { name: "Krishna Kumar", title: "CEO, Simplilearn" }
     ],
     platform: "simplilearn",
-    src: "/certificates/Screenshot 2026-07-25 192257.png"
+    src: "/certificates/Screenshot 2026-07-25 192257.webp"
   }
 ];
 
