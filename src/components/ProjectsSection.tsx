@@ -494,14 +494,8 @@ export default function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="relative flex flex-col items-center justify-center bg-[#0C0C0C] px-0 pt-24 pb-24 sm:pt-32 sm:pb-32 overflow-hidden select-none border-t border-[#D7E2EA]/5"
+      className="relative flex flex-col items-center justify-center bg-transparent px-0 pt-24 pb-24 sm:pt-32 sm:pb-32 overflow-hidden select-none border-t border-[#D7E2EA]/5"
     >
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <StarsBackground className="z-0 opacity-60" />
-        <ShootingStars className="pointer-events-none z-10 opacity-90" />
-        <div className="absolute inset-0 bg-[#0C0C0C]/35 z-10 pointer-events-none" />
-      </div>
-
       {/* Viewport content */}
       <div className="w-full z-10 flex flex-col items-center">
         

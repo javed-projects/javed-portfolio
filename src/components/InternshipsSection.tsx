@@ -259,7 +259,6 @@ const MiniDataChart: React.FC<{ type: string; color: string }> = ({ type, color 
 const VectorCertificate: React.FC<{ cert: Certificate; size?: 'normal' | 'large' }> = ({ cert, size = 'normal' }) => {
   const isLarge = size === 'large';
   
-  // Safely clone and resize the icon to perfectly center it within the circular boundary without clipping
   const certIcon = React.isValidElement(cert.icon)
     ? React.cloneElement(cert.icon as React.ReactElement<any>, {
         className: `text-white ${isLarge ? 'w-5 h-5' : 'w-4 h-4'} shrink-0`,
@@ -339,7 +338,6 @@ const VectorCertificate: React.FC<{ cert: Certificate; size?: 'normal' | 'large'
             Md Javed
           </span>
           
-          {/* Subtle elegant button badge on the card itself */}
           {!isLarge && (
             <div className="mt-2 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[6px] font-mono uppercase tracking-[0.1em] text-white/60 group-hover:bg-white group-hover:text-black group-hover:border-white transition-all duration-300">
               View Simulation
@@ -371,7 +369,6 @@ const VectorCertificate: React.FC<{ cert: Certificate; size?: 'normal' | 'large'
           </div>
         </div>
 
-        {/* Dynamic visual graph at bottom */}
         <div className={`overflow-hidden flex items-end justify-center ${isLarge ? 'w-full h-[32px] sm:h-[40px]' : 'w-full h-[20px] sm:h-[28px]'}`}>
           <MiniDataChart type={cert.chartType} color={cert.color} />
         </div>
@@ -402,7 +399,6 @@ const CertificateDisplay: React.FC<{ cert: Certificate; mode: 'landscape' | 'por
   }
 
   const handleImageError = () => {
-    // List of extensions to try in sequence: .png, .jpg, .jpeg, .webp
     const extensions = ['.png', '.jpg', '.jpeg', '.webp'];
     const baseName = cert.imageUrl ? cert.imageUrl.substring(0, cert.imageUrl.lastIndexOf('.')) : '';
     
@@ -412,7 +408,6 @@ const CertificateDisplay: React.FC<{ cert: Certificate; mode: 'landscape' | 'por
       return;
     }
 
-    // Find next extension that hasn't been tried yet
     const nextExt = extensions.find(ext => {
       const pathWithExt = baseName + ext;
       return pathWithExt !== currentSrc && !triedExtensions.includes(pathWithExt);
@@ -443,33 +438,30 @@ const CertificateDisplay: React.FC<{ cert: Certificate; mode: 'landscape' | 'por
         onLoad={() => setLoading(false)}
         onError={handleImageError}
       />
-     {/* ---> UPDATED CODE: Smaller TATA & Shifted Left <--- */}
-          {mode === 'portrait' && (
-            <div className="absolute top-4 left-2 sm:top-5 sm:left-3 z-20 pointer-events-none flex items-center">
-              {cert.issuer.includes('Deloitte') ? (
-                <div className="flex items-baseline">
-                  <span style={{ fontFamily: 'Inter, sans-serif' }} className="font-black text-lg sm:text-xl text-black tracking-tighter whitespace-nowrap">
-                    Deloitte
-                  </span>
-                  <span className="w-1.5 h-1.5 sm:w-[6px] sm:h-[6px] rounded-full bg-[#86BC25] ml-[1.5px]"></span>
-                </div>
-              ) : cert.issuer.includes('Tata') || cert.issuer.includes('TATA') ? (
-                <span style={{ fontFamily: 'Inter, sans-serif' }} className="font-black text-lg sm:text-xl text-[#005A9C] tracking-tighter uppercase whitespace-nowrap">
-                  TATA
-                </span>
-              ) : cert.issuer.includes('Goldman') ? (
-                <span style={{ fontFamily: '"Playfair Display", Georgia, serif' }} className="font-bold text-lg sm:text-xl text-black tracking-wide whitespace-nowrap">
-                  Goldman Sachs
-                </span>
-              ) : (
-                /* AUTOMATIC FALLBACK */
-                <span className="font-sans font-bold text-base sm:text-lg text-slate-800 tracking-tight whitespace-nowrap">
-                  {cert.issuer}
-                </span>
-              )}
+      {mode === 'portrait' && (
+        <div className="absolute top-4 left-2 sm:top-5 sm:left-3 z-20 pointer-events-none flex items-center">
+          {cert.issuer.includes('Deloitte') ? (
+            <div className="flex items-baseline">
+              <span style={{ fontFamily: 'Inter, sans-serif' }} className="font-black text-lg sm:text-xl text-black tracking-tighter whitespace-nowrap">
+                Deloitte
+              </span>
+              <span className="w-1.5 h-1.5 sm:w-[6px] sm:h-[6px] rounded-full bg-[#86BC25] ml-[1.5px]"></span>
             </div>
+          ) : cert.issuer.includes('Tata') || cert.issuer.includes('TATA') ? (
+            <span style={{ fontFamily: 'Inter, sans-serif' }} className="font-black text-lg sm:text-xl text-[#005A9C] tracking-tighter uppercase whitespace-nowrap">
+              TATA
+            </span>
+          ) : cert.issuer.includes('Goldman') ? (
+            <span style={{ fontFamily: '"Playfair Display", Georgia, serif' }} className="font-bold text-lg sm:text-xl text-black tracking-wide whitespace-nowrap">
+              Goldman Sachs
+            </span>
+          ) : (
+            <span className="font-sans font-bold text-base sm:text-lg text-slate-800 tracking-tight whitespace-nowrap">
+              {cert.issuer}
+            </span>
           )}
-      {/* ------------------------------------------------------- */}
+        </div>
+      )}
     </div>
   );
 };
@@ -481,11 +473,8 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
 
   return (
     <div className="relative w-full aspect-[1.414/1] bg-white text-slate-800 border-4 border-neutral-200/50 p-6 sm:p-10 flex flex-col justify-between overflow-hidden rounded-xl shadow-2xl select-none font-sans">
-      
-      {/* Deloitte minimalist style */}
       {isDeloitte && (
         <div className="absolute inset-0 bg-white p-6 sm:p-10 flex flex-col justify-between h-full w-full">
-          {/* Logo */}
           <div className="flex items-center justify-between">
             <svg viewBox="0 0 150 40" className="h-8 sm:h-9">
               <text x="0" y="30" fontFamily="'Inter', sans-serif" fontWeight="900" fontSize="30" fill="#000000" letterSpacing="-1.5">Deloitte</text>
@@ -493,7 +482,6 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
             </svg>
           </div>
 
-          {/* Core Content */}
           <div className="flex-grow flex flex-col justify-center max-w-2xl mt-2">
             <h3 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight leading-none">
               Md Javed
@@ -521,10 +509,8 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
             </div>
           </div>
 
-          {/* Bottom section with signature */}
           <div className="flex items-end justify-between border-t border-slate-100 pt-3">
             <div className="flex flex-col">
-              {/* Elegant signature styling */}
               <span className="font-serif italic text-base sm:text-lg text-neutral-800 h-6 flex items-end font-medium">
                 Tina McCreery
               </span>
@@ -537,7 +523,6 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
               </span>
             </div>
 
-            {/* Verification code at the absolute bottom */}
             <div className="text-right flex flex-col gap-0.5 text-[7px] sm:text-[8px] font-mono text-slate-400">
               <span>Enrolment Verification Code {cert.enrolmentCode}</span>
               <span>User Verification Code {cert.userCode}</span>
@@ -547,15 +532,12 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
         </div>
       )}
 
-      {/* Forage Dual-Branded Style (TATA, Goldman Sachs) */}
       {(isTATA || isGS) && (
         <div className="absolute inset-0 bg-white flex flex-col justify-between h-full w-full">
-          {/* Blue stripes on left and right edges */}
           <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-[#2C6AE3]" />
           <div className="absolute right-0 top-0 bottom-0 w-2.5 bg-[#2C6AE3]" />
 
           <div className="px-6 sm:px-10 py-6 sm:py-8 flex-grow flex flex-col justify-between">
-            {/* Header: Partner Logo & Forage Badge */}
             <div className="flex items-start justify-between w-full">
               {isTATA && (
                 <div className="flex items-center gap-2">
@@ -576,7 +558,6 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
                 </div>
               )}
 
-              {/* Blue Ribbon Banner */}
               <div className="absolute top-0 right-10 w-24 sm:w-28 bg-[#2C6AE3] text-white p-2.5 sm:p-3 rounded-b-xl flex flex-col items-center justify-center text-center shadow-sm">
                 <div className="flex items-center gap-1 mb-0.5">
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -589,7 +570,6 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
               </div>
             </div>
 
-            {/* Core Recipient and Title Content */}
             <div className="flex-grow flex flex-col justify-center max-w-2xl mt-4">
               <h3 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight leading-none">
                 Md Javed
@@ -617,7 +597,6 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
               </div>
             </div>
 
-            {/* Bottom Row Signatures & Verification */}
             <div className="flex items-end justify-between border-t border-slate-100 pt-3">
               <div className="flex flex-col">
                 <span className="font-serif italic text-base sm:text-lg text-neutral-800 h-6 flex items-end font-medium">
@@ -632,7 +611,6 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
                 </span>
               </div>
 
-              {/* Verification Codes */}
               <div className="text-right flex flex-col gap-0.5 text-[7px] sm:text-[8px] font-mono text-slate-400">
                 <span>Enrolment Verification Code {cert.enrolmentCode}</span>
                 <span>User Verification Code {cert.userCode}</span>
@@ -647,8 +625,8 @@ const LandscapeCertificate: React.FC<{ cert: Certificate }> = ({ cert }) => {
 };
 
 export default function InternshipsSection() {
-  const [activeIndex, setActiveIndex] = useState(2); // Start with central card active
-  const [currentPosition, setCurrentPosition] = useState(2); // Smoothly interpolated position
+  const [activeIndex, setActiveIndex] = useState(2);
+  const [currentPosition, setCurrentPosition] = useState(2);
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
   const [dimensions, setDimensions] = useState({ cardWidth: 260, gap: 32 });
   const [containerWidth, setContainerWidth] = useState(1200);
@@ -658,7 +636,6 @@ export default function InternshipsSection() {
   const [isInViewport, setIsInViewport] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Intersection Observer to track section visibility and pause background loop when off-screen
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -676,7 +653,6 @@ export default function InternshipsSection() {
     };
   }, []);
 
-  // Local state for user-uploaded custom certificate images
   const [uploadedCerts, setUploadedCerts] = useState<Record<string, string>>(() => {
     try {
       const saved = localStorage.getItem('user_portfolio_certificates');
@@ -686,39 +662,13 @@ export default function InternshipsSection() {
     }
   });
 
-  const [isDragging, setIsDragging] = useState(false);
-
-  // Dynamically map base64 user uploads over the default image URLs
   const dynamicCertificates = CERTIFICATES.map(cert => ({
     ...cert,
     imageUrl: uploadedCerts[cert.id] || cert.imageUrl
   }));
 
-  // Maintain active reference in the modal so it changes dynamically on upload
   const activeCert = selectedCert ? dynamicCertificates.find(c => c.id === selectedCert.id) || selectedCert : null;
 
-  const handleUploadCert = (certId: string, base64Data: string) => {
-    const updated = { ...uploadedCerts, [certId]: base64Data };
-    setUploadedCerts(updated);
-    try {
-      localStorage.setItem('user_portfolio_certificates', JSON.stringify(updated));
-    } catch (e) {
-      console.error("Local storage storage limit exceeded, but state updated successfully", e);
-    }
-  };
-
-  const handleResetCert = (certId: string) => {
-    const updated = { ...uploadedCerts };
-    delete updated[certId];
-    setUploadedCerts(updated);
-    try {
-      localStorage.setItem('user_portfolio_certificates', JSON.stringify(updated));
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  // Sync activeIndex with the current continuous drift position
   useEffect(() => {
     if (!isInteractingRef.current) {
       const N = dynamicCertificates.length;
@@ -729,25 +679,15 @@ export default function InternshipsSection() {
     }
   }, [currentPosition, activeIndex, dynamicCertificates.length]);
 
-  // Update layout dimensions dynamically for a flawless responsive visual hierarchy
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       if (width < 640) {
-        setDimensions({
-          cardWidth: 180,
-          gap: 16,
-        });
+        setDimensions({ cardWidth: 180, gap: 16 });
       } else if (width < 1024) {
-        setDimensions({
-          cardWidth: 220,
-          gap: 24,
-        });
+        setDimensions({ cardWidth: 220, gap: 24 });
       } else {
-        setDimensions({
-          cardWidth: 260,
-          gap: 32,
-        });
+        setDimensions({ cardWidth: 260, gap: 32 });
       }
 
       if (containerRef.current) {
@@ -756,9 +696,8 @@ export default function InternshipsSection() {
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Initial call
+    handleResize();
 
-    // Set up a resize observer to watch container size updates precisely
     let observer: ResizeObserver | null = null;
     if (containerRef.current) {
       observer = new ResizeObserver((entries) => {
@@ -781,16 +720,14 @@ export default function InternshipsSection() {
   const gap = dimensions.gap;
   const totalWidth = cardWidth + gap;
 
-  // Symmetrical circular interpolation for buttery-smooth slider transitions and automated continuous drift
   useEffect(() => {
-    if (!isInViewport) return; // Completely pause frame-by-frame updates when the section is scrolled off-screen!
+    if (!isInViewport) return;
 
     const animate = () => {
       setCurrentPosition((prev) => {
         const N = dynamicCertificates.length;
 
         if (isInteractingRef.current) {
-          // Interpolate smoothly towards activeIndex
           let diff = activeIndex - prev;
           if (diff > N / 2) {
             diff -= N;
@@ -799,19 +736,16 @@ export default function InternshipsSection() {
           }
 
           if (Math.abs(diff) < 0.01) {
-            isInteractingRef.current = false; // Done aligning, resume drift or freeze
+            isInteractingRef.current = false;
             return activeIndex;
           }
-          // High performance snappier organic damping (0.12 instead of 0.05)
           let next = prev + diff * 0.12;
           if (next < 0) next += N;
           if (next >= N) next -= N;
           return next;
         } else {
-          if (selectedCert) return prev; // Freeze drift when modal is open and we aren't centering
+          if (selectedCert) return prev;
 
-          // Continuous slow drift! Move exactly 1 card space every 5 seconds (60 FPS * 5s = 300 frames)
-          // Drift increment per frame: 1 / 300 = 0.00333
           let next = prev + 0.00333;
           if (next >= N) next -= N;
           return next;
@@ -839,7 +773,6 @@ export default function InternshipsSection() {
     setActiveIndex((prev) => (prev + 1) % dynamicCertificates.length);
   };
 
-  // Centers and opens the detailed certificate preview instantly when clicked
   const handleCardClick = (index: number) => {
     isInteractingRef.current = true;
     setActiveIndex(index);
@@ -850,20 +783,10 @@ export default function InternshipsSection() {
     <section
       ref={sectionRef}
       id="internships"
-      className="relative flex flex-col items-center justify-center bg-[#0C0C0C] px-0 py-24 sm:py-32 overflow-hidden select-none border-t border-[#D7E2EA]/5"
+      className="relative flex flex-col items-center justify-center bg-transparent px-0 py-24 sm:py-32 overflow-hidden select-none border-t border-[#D7E2EA]/5"
     >
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <StarsBackground className="z-0 opacity-60" />
-        <ShootingStars className="pointer-events-none z-10 opacity-90" />
-        <div className="absolute inset-0 bg-[#0C0C0C]/35 z-10 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00F2FE]/5 rounded-full blur-[140px] pointer-events-none z-0" />
-        <div className="absolute -top-40 right-10 w-96 h-96 bg-[#FF529E]/3 rounded-full blur-[120px] pointer-events-none z-0" />
-      </div>
-
-      {/* Full viewport-width container for grand cinematic horizontal carousel */}
       <div className="w-full z-10 flex flex-col items-center">
         
-        {/* Title Block with flawless typography symmetry */}
         <div className="text-center mb-12 sm:mb-16 px-5 pt-24 sm:pt-32 w-full">
           <FadeIn delay={0} y={40} as="div" className="w-full">
             <ScrollFadeElement as="div">
@@ -877,10 +800,8 @@ export default function InternshipsSection() {
           </FadeIn>
         </div>
 
-        {/* 3D C-Shape curved horizontal viewport with Navigation Arrows */}
         <div className="relative w-full flex items-center justify-center px-4 sm:px-12 md:px-20">
           
-          {/* Left Arrow Button */}
           <button
             onClick={handlePrev}
             className="absolute left-4 sm:left-6 md:left-12 z-30 p-3 sm:p-4 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-105 active:scale-95 text-white/70 hover:text-white transition-all duration-300 backdrop-blur-md cursor-pointer flex items-center justify-center shadow-lg"
@@ -889,7 +810,6 @@ export default function InternshipsSection() {
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
 
-          {/* Right Arrow Button */}
           <button
             onClick={handleNext}
             className="absolute right-4 sm:right-6 md:right-12 z-30 p-3 sm:p-4 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-105 active:scale-95 text-white/70 hover:text-white transition-all duration-300 backdrop-blur-md cursor-pointer flex items-center justify-center shadow-lg"
@@ -898,17 +818,14 @@ export default function InternshipsSection() {
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
 
-          {/* 3D Stage Viewport */}
           <div 
             ref={containerRef}
             className="relative w-full max-w-[1200px] h-[390px] sm:h-[530px] flex items-center justify-center overflow-visible pointer-events-none"
-            style={{ perspective: '850px' }} // Tightened perspective for enhanced 3D pop
+            style={{ perspective: '850px' }}
           >
-            {/* Outer edge-fading visual gradients to beautifully mask cards coming and leaving the sides */}
             <div className="absolute inset-y-0 left-0 w-16 sm:w-44 bg-gradient-to-r from-[#0C0C0C] via-[#0C0C0C]/80 to-transparent z-20 pointer-events-none" />
             <div className="absolute inset-y-0 right-0 w-16 sm:w-44 bg-gradient-to-l from-[#0C0C0C] via-[#0C0C0C]/80 to-transparent z-20 pointer-events-none" />
 
-            {/* Symmetrical Curved Carousel Track Wrapper */}
             <div
               className="relative flex items-center justify-center w-full h-full pointer-events-none"
               style={{ transformStyle: 'preserve-3d' }}
@@ -917,7 +834,6 @@ export default function InternshipsSection() {
                 const N = dynamicCertificates.length;
                 let offset = index - currentPosition;
 
-                // Circular shortest path wrap-around logic so cards move smoothly in both directions
                 if (offset > N / 2) {
                   offset -= N;
                 } else if (offset < -N / 2) {
@@ -925,24 +841,11 @@ export default function InternshipsSection() {
                 }
 
                 const absN = Math.abs(offset);
-
-                // Compute premium 3D C-shape curve concave transforms (concave curving display wall like the image):
-                // 1. Translation X: distribute cards symmetrically from left to center to right
                 const translateX = offset * totalWidth;
-                
-                // 2. Rotation Y: turn cards inward towards the screen center (gently angled for high legibility and easy clicking)
                 const rotateY = offset * -22; 
-                
-                // 3. Translation Z (depth): bends cards backward into perspective as they move to the left/right screen edges
-                const translateZ = -Math.pow(absN, 1.1) * 110; // curves back gently up to 110px deep
-                
-                // 4. Spacing correction along curved arc path
+                const translateZ = -Math.pow(absN, 1.1) * 110;
                 const translateXCorrected = -offset * Math.pow(absN, 1.1) * 8;
-                
-                // 5. Scale: subtle scale down for distant edge cards to enrich depth perception
                 const scale = 1 - (absN * 0.05);
-                
-                // 6. Opacity: keep all cards highly visible, vivid, and easily readable (minimum opacity 0.52)
                 const opacity = Math.max(0.52, 1 - absN * 0.22);
 
                 return (
@@ -952,17 +855,15 @@ export default function InternshipsSection() {
                     className="absolute cursor-pointer transition-shadow duration-500 hover:scale-[1.03] active:scale-[0.98] group pointer-events-auto"
                     style={{
                       width: `${cardWidth}px`,
-                      height: `${cardWidth * 1.38}px`, // premium portrait certificate aspect ratio
+                      height: `${cardWidth * 1.38}px`,
                       transform: `translateX(${translateX + translateXCorrected}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
                       transformStyle: 'preserve-3d',
                       opacity: opacity,
-                      zIndex: Math.round((dynamicCertificates.length - absN) * 100) + 10, // Ensure zIndex is always positive and centered cards are stacked on top
+                      zIndex: Math.round((dynamicCertificates.length - absN) * 100) + 10,
                       boxShadow: absN < 0.85 ? `0 20px 45px -10px rgba(0,0,0,0.85), 0 0 45px -15px ${cert.color}25` : 'none',
                     }}
                   >
                     <CertificateDisplay cert={cert} mode="portrait" />
-                    
-                    {/* Glowing neon card border highlight */}
                     <div className="absolute inset-0 rounded-2xl pointer-events-none border border-white/5 group-hover:border-white/20 transition-all duration-500" />
                   </div>
                 );
@@ -971,7 +872,6 @@ export default function InternshipsSection() {
           </div>
         </div>
 
-        {/* Custom Symmetrical Dot Indicators underneath */}
         <div className="flex items-center gap-2 mt-6 sm:mt-10 z-20">
           {dynamicCertificates.map((cert, idx) => (
             <button
@@ -988,15 +888,12 @@ export default function InternshipsSection() {
           ))}
         </div>
 
-        {/* Spacing alignment */}
         <div className="mt-4" />
       </div>
 
-      {/* Premium Dark Modal overlay to view detailed certificate credential */}
       <AnimatePresence>
         {activeCert && (
           <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center p-4 overflow-y-auto">
-            {/* Dark glass backdrop with blur */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1005,7 +902,6 @@ export default function InternshipsSection() {
               className="absolute inset-0 bg-black/92 backdrop-blur-md"
             />
 
-            {/* Modal Container */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -1013,7 +909,6 @@ export default function InternshipsSection() {
               transition={{ type: 'spring', damping: 25, stiffness: 220 }}
               className="relative w-full max-w-[380px] md:max-w-[760px] bg-[#0A0A0A] border border-white/10 rounded-2xl overflow-hidden p-5 sm:p-6 z-10 flex flex-col gap-4 shadow-[0_30px_70px_rgba(0,0,0,0.9)] max-h-[92vh] overflow-y-auto my-auto"
             >
-              {/* Top Bar with Title and Close button */}
               <div className="flex justify-between items-center border-b border-white/5 pb-3 gap-3">
                 <div className="flex items-center gap-2 min-w-0" style={{ paddingLeft: "16px" }}>
                   <Award className="w-4 h-4 shrink-0" style={{ color: activeCert.color }} />
@@ -1031,7 +926,6 @@ export default function InternshipsSection() {
                 </button>
               </div>
 
-              {/* High-Fidelity Landscape Certificate View (Desktop) / Portrait Brand Card (Mobile) */}
               <div className="w-full relative">
                 <div className="hidden md:block w-full">
                   <CertificateDisplay cert={activeCert} mode="landscape" />
@@ -1041,10 +935,7 @@ export default function InternshipsSection() {
                 </div>
               </div>
 
-          {/* Action Buttons with details and verification link */}
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2 pt-5 pb-8 mb-4 border-t border-white/5 w-full">
-                
-                {/* Changed to 16px to align perfectly with the certificate's left edge */}
                 <div className="text-left w-full sm:w-auto min-w-0" style={{ paddingLeft: "16px" }}>
                   <span className="block text-[8.5px] sm:text-[9.5px] font-mono uppercase tracking-widest text-white/40 pb-1">
                     Credential Program
@@ -1054,7 +945,6 @@ export default function InternshipsSection() {
                   </span>
                 </div>
 
-                {/* Changed to 16px to give the button a natural, aesthetic margin */}
                 <a
                   href={activeCert.credentialUrl}
                   target="_blank"

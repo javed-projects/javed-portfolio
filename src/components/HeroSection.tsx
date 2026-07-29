@@ -18,10 +18,11 @@ const HeroSection = React.memo(function HeroSection() {
 
   return (
     <section id="hero" className="relative h-screen flex flex-col justify-between overflow-x-clip bg-transparent select-none">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Fixed unified background layer to prevent multi-layered scrolling bugs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1]">
         <StarsBackground className="opacity-70" />
         <ShootingStars className="pointer-events-none opacity-90" />
-        <div className="absolute inset-0 bg-[#0C0C0C]/25" />
+        <div className="absolute inset-0 bg-[#0C0C0C]/40" />
       </div>
 
       {/* Top Spacer to balance the layout since the Navbar is removed */}

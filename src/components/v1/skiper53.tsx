@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useState, useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { ShieldCheck, ArrowDownRight, ExternalLink, X, Award } from "lucide-react";
-import MagnetLines from '@/components/MagnetLines';
 
 interface Signature {
   name: string;
@@ -260,9 +259,9 @@ const CertificateRow = React.memo(function CertificateRow({
   return (
     <motion.div
       className={cn(
-        "group relative cursor-pointer overflow-hidden rounded-[34px] border backdrop-blur-md transition-colors duration-300",
+        "group relative cursor-pointer overflow-hidden rounded-[34px] border transition-colors duration-300",
         isActive 
-          ? "border-[#FF529E]/60 bg-black/40 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),_0_0_35px_rgba(255,82,158,0.18)]" 
+          ? "border-[#FF529E]/60 bg-black/60 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),_0_0_35px_rgba(255,82,158,0.18)]" 
           : "border-white/10 bg-[#0e0e0e]/15 hover:border-white/25 hover:bg-[#0e0e0e]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
       )}
       initial={{ height: "4.25rem" }}
@@ -272,18 +271,9 @@ const CertificateRow = React.memo(function CertificateRow({
       onClick={handleClick}
       onHoverStart={handleHover}
     >
+      {/* Lightweight glowing accent instead of heavy MagnetLines animation */}
       {isActive && (
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-100 transition-opacity duration-300">
-          <MagnetLines
-            rows={8}
-            columns={18}
-            containerSize="100%"
-            lineColor="rgba(255, 255, 255, 0.22)"
-            lineWidth="1.5px"
-            lineHeight="14px"
-            baseAngle={45}
-          />
-        </div>
+        <div className="absolute inset-0 pointer-events-none z-0 bg-gradient-to-r from-[#FF529E]/10 via-transparent to-transparent opacity-80" />
       )}
 
       <div className="absolute top-0 inset-x-0 h-[4.25rem] w-full flex items-center justify-between z-20 pointer-events-none">

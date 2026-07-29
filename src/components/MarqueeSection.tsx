@@ -1,3 +1,4 @@
+// src/components/MarqueeSection.tsx
 import React, { useRef, useEffect } from 'react';
 
 const ROW_1_IMAGES = [
@@ -35,7 +36,7 @@ const MarqueeSection = React.memo(function MarqueeSection() {
       const rect = section.getBoundingClientRect();
       const sectionTop = rect.top + window.scrollY;
 
-      // Scroll offset calculation: (window.scrollY - sectionTop + window.innerHeight) * 0.3
+      // Scroll offset calculation
       const calculatedOffset = (window.scrollY - sectionTop + window.innerHeight) * 0.3;
       
       row1Ref.current.style.transform = `translate3d(${calculatedOffset - 200}px, 0px, 0px)`;
@@ -52,7 +53,6 @@ const MarqueeSection = React.memo(function MarqueeSection() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Initial call to set starting position
     handleScroll();
 
     return () => {
@@ -65,7 +65,7 @@ const MarqueeSection = React.memo(function MarqueeSection() {
     <section
       ref={sectionRef}
       id="marquee"
-      className="bg-[#0C0C0C] pt-24 sm:pt-32 md:pt-40 pb-10 overflow-hidden"
+      className="bg-transparent pt-24 sm:pt-32 md:pt-40 pb-10 overflow-hidden select-none"
     >
       <div className="flex flex-col gap-3 w-full">
         {/* Row 1: Moves RIGHT on scroll */}
@@ -82,7 +82,7 @@ const MarqueeSection = React.memo(function MarqueeSection() {
             {row1Tripled.map((id, i) => (
               <div
                 key={`r1-${i}`}
-                className="w-[480px] h-[270px] rounded-2xl border-2 border-[#D7E2EA]/10 bg-black hover:border-[#D7E2EA]/30 transition-all duration-300 shrink-0 select-none pointer-events-none overflow-hidden"
+                className="w-[480px] h-[270px] rounded-2xl border-2 border-[#D7E2EA]/10 bg-black/60 backdrop-blur-sm hover:border-[#D7E2EA]/30 transition-all duration-300 shrink-0 select-none pointer-events-none overflow-hidden"
               >
                 <img 
                   src={id} 
@@ -90,6 +90,8 @@ const MarqueeSection = React.memo(function MarqueeSection() {
                   className="w-full h-full object-contain" 
                   loading={i < 3 ? "eager" : "lazy"}
                   decoding="async"
+                  width={480}
+                  height={270}
                 />
               </div>
             ))}
@@ -110,7 +112,7 @@ const MarqueeSection = React.memo(function MarqueeSection() {
             {row2Tripled.map((id, i) => (
               <div
                 key={`r2-${i}`}
-                className="w-[480px] h-[270px] rounded-2xl border-2 border-[#D7E2EA]/10 bg-black hover:border-[#D7E2EA]/30 transition-all duration-300 shrink-0 select-none pointer-events-none overflow-hidden"
+                className="w-[480px] h-[270px] rounded-2xl border-2 border-[#D7E2EA]/10 bg-black/60 backdrop-blur-sm hover:border-[#D7E2EA]/30 transition-all duration-300 shrink-0 select-none pointer-events-none overflow-hidden"
               >
                 <img 
                   src={id} 
@@ -118,6 +120,8 @@ const MarqueeSection = React.memo(function MarqueeSection() {
                   className="w-full h-full object-cover" 
                   loading={i < 3 ? "eager" : "lazy"}
                   decoding="async"
+                  width={480}
+                  height={270}
                 />
               </div>
             ))}
