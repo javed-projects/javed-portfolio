@@ -1,12 +1,6 @@
+// src/components/ui/shooting-stars.tsx
 "use client";
-
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 import React, { useEffect, useRef } from "react";
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 interface ShootingStar {
   x: number;
@@ -15,145 +9,233 @@ interface ShootingStar {
   scale: number;
   speed: number;
   distance: number;
-  starColorStop: string;
-  trailColorStop: string;
+  maxDistance: number;
+  colorObj: { r: number; g: number; b: number };
+  trailLength: number;
+  glowIntensity: number;
+  opacity: number;
+  thickness: number;
+  driftFrequency: number;
+  driftAmplitude: number;
 }
 
-const COLOR_PALETTES = [
-  { starColor: "#FF2A6D", trailColor: "#FF5252" },
-  { starColor: "#10B981", trailColor: "#34D399" },
-  { starColor: "#FFFFFF", trailColor: "#CBD5E1" },
-  { starColor: "#D8B4FE", trailColor: "#C084FC" },
-  { starColor: "#00F2FE", trailColor: "#4FACFE" },
-  { starColor: "#FFB800", trailColor: "#F59E0B" },
-  { starColor: "#FF007F", trailColor: "#FF75C3" },
+interface ShootingStarsProps {
+  minSpeed?: number;
+  maxSpeed?: number;
+  minDelay?: number;
+  maxDelay?: number;
+  starColor?: string;
+  trailColor?: string;
+  starWidth?: number;
+  starHeight?: number;
+  className?: string;
+}
+
+const PALETTE = [
+  { r: 158, g: 0, b: 255 },   // Purple
+  { r: 46, g: 185, b: 223 },  // Blue
+  { r: 0, g: 240, b: 255 },   // Cyan
+  { r: 255, g: 255, b: 255 }, // White
+  { r: 255, g: 82, b: 158 },  // Pink
+  { r: 255, g: 179, b: 71 },  // Light Orange
 ];
 
-function hexToRgba(hex: string, alpha: number): string {
-  let c = hex.replace("#", "");
-  if (c.length === 3) {
-    c = c.split("").map((x) => x + x).join("");
-  }
-  const num = parseInt(c, 16);
-  return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
-}
-
-const PREPROCESSED_PALETTES = COLOR_PALETTES.map((p) => ({
-  starColorStop: hexToRgba(p.starColor, 1),
-  trailColorStop: hexToRgba(p.trailColor, 0),
-}));
-
-const COS_45 = Math.cos((45 * Math.PI) / 180);
-const SIN_45 = Math.sin((45 * Math.PI) / 180);
-const RAD_45 = (45 * Math.PI) / 180;
-
-export const ShootingStars = ({ className }: { className?: string }) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+export const ShootingStars: React.FC<ShootingStarsProps> = ({
+  minSpeed = 3,
+  maxSpeed = 8,
+  minDelay = 400,
+  maxDelay = 1200,
+  starColor = "#9E00FF",
+  trailColor = "#2EB9DF",
+  starWidth = 30,
+  starHeight = 2,
+  className = "",
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const starsRef = useRef<ShootingStar[]>([]);
+  const nextSpawnTimeRef = useRef<number>(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let animationFrameId: number;
-    let timeoutId: NodeJS.Timeout;
 
-    let width = 0;
-    let height = 0;
-    let dpr = 1;
-
-    const resizeCanvas = () => {
+    const updateCanvasSize = () => {
       if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      dpr = window.devicePixelRatio || 1;
-      width = rect.width;
-      height = rect.height;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
+    updateCanvasSize();
+    window.addEventListener("resize", updateCanvasSize);
 
-    resizeCanvas();
+    const createStar = (width: number, height: number): ShootingStar => {
+      const roll = Math.random();
+      let x, y, angle;
 
-    const parent = canvas.parentElement;
-    const resizeObserver = new ResizeObserver(() => {
-      resizeCanvas();
-    });
-    if (parent) {
-      resizeObserver.observe(parent);
-    }
-
-    const spawnStar = () => {
-      const w = width || (typeof window !== "undefined" ? window.innerWidth : 1200);
-      const h = height || (typeof window !== "undefined" ? window.innerHeight : 800);
-      const palette = PREPROCESSED_PALETTES[Math.floor(Math.random() * PREPROCESSED_PALETTES.length)];
-
-      const newStar: ShootingStar = {
-        x: Math.random() * w,
-        y: Math.random() * (h / 2),
-        angle: 45,
-        scale: 1,
-        speed: Math.random() * 20 + 15,
-        distance: 0,
-        starColorStop: palette.starColorStop,
-        trailColorStop: palette.trailColorStop,
-      };
-
-      const stars = starsRef.current;
-      if (stars.length >= 9) {
-        stars.shift();
+      if (roll < 0.40) {
+        // 1. Top → Bottom Right (Primary cinematic direction ~40%)
+        x = Math.random() * (width + 100) - 50;
+        y = -50 - Math.random() * 30;
+        angle = Math.random() * 20 + 35; // 35° to 55°
+      } else if (roll < 0.75) {
+        // 4. Top Right → Bottom Left (Primary cinematic direction ~35%)
+        x = width * 0.3 + Math.random() * (width * 0.7 + 50);
+        y = -50 - Math.random() * 30;
+        angle = Math.random() * 20 + 125; // 125° to 145°
+      } else if (roll < 0.80) {
+        // 2. Left → Bottom Right (~5%)
+        x = -50 - Math.random() * 30;
+        y = Math.random() * (height * 0.4);
+        angle = Math.random() * 20 + 15; // 15° to 35°
+      } else if (roll < 0.85) {
+        // 3. Right → Bottom Left (~5%)
+        x = width + 50 + Math.random() * 30;
+        y = Math.random() * (height * 0.4);
+        angle = Math.random() * 20 + 145; // 145° to 165°
+      } else if (roll < 0.90) {
+        // 5. Top → Bottom Left (~5%)
+        x = Math.random() * width;
+        y = -50 - Math.random() * 30;
+        angle = Math.random() * 20 + 120; // 120° to 140°
+      } else if (roll < 0.95) {
+        // 6. Left → Top Right (occasionally ~5%)
+        x = -50 - Math.random() * 30;
+        y = height * 0.3 + Math.random() * (height * 0.4);
+        angle = Math.random() * 20 - 40; // -40° to -20°
+      } else {
+        // 7. Right → Bottom Right / Top-Right area down-right (~5%)
+        x = width * 0.5 + Math.random() * (width * 0.5 + 50);
+        y = -50 - Math.random() * 30;
+        angle = Math.random() * 20 + 35; // 35° to 55°
       }
-      stars.push(newStar);
 
-      timeoutId = setTimeout(spawnStar, Math.random() * 800 + 400);
+      const speed = Math.random() * (maxSpeed - minSpeed) + minSpeed;
+      const colorObj = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+      const trailLength = Math.random() * 50 + 60; // Long cinematic trail
+      const glowIntensity = Math.random() * 18 + 14; // Richer, smoother glow
+      const opacity = Math.random() * 0.2 + 0.8;
+      const maxDistance = Math.hypot(width, height) * 0.9;
+      
+      // Random trail thickness variation (subtle and realistic)
+      const thickness = starHeight * (Math.random() * 0.6 + 0.7);
+      
+      // Extremely subtle atmospheric drift parameters using sinusoidal offset
+      const driftFrequency = Math.random() * 0.02 + 0.01;
+      const driftAmplitude = Math.random() * 0.4 + 0.2;
+
+      return {
+        x,
+        y,
+        angle,
+        scale: Math.random() * 0.4 + 0.8,
+        speed,
+        distance: 0,
+        maxDistance,
+        colorObj,
+        trailLength,
+        glowIntensity,
+        opacity,
+        thickness,
+        driftFrequency,
+        driftAmplitude,
+      };
     };
 
-    spawnStar();
+    const render = (time: number) => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const render = () => {
-      ctx.clearRect(0, 0, width, height);
+      // Adaptive density calculation based on screen size/area
+      const screenArea = canvas.width * canvas.height;
+      const maxConcurrent = Math.min(6, Math.max(2, Math.floor(screenArea / 300000)));
 
-      const stars = starsRef.current;
-      const limitX = width + 50;
-      const limitY = height + 50;
+      // Spawn timing: use a single computed nextSpawnTimeRef
+      if (starsRef.current.length < maxConcurrent && time >= nextSpawnTimeRef.current) {
+        starsRef.current.push(createStar(canvas.width, canvas.height));
+        const randomDelay = Math.random() * (maxDelay - minDelay) + minDelay;
+        nextSpawnTimeRef.current = time + randomDelay;
+      }
 
-      let writeIdx = 0;
+      for (let i = starsRef.current.length - 1; i >= 0; i--) {
+        const star = starsRef.current[i];
 
-      for (let i = 0; i < stars.length; i++) {
-        const star = stars[i];
+        ctx.save();
+        const baseRadians = (star.angle * Math.PI) / 180;
 
-        star.x += star.speed * COS_45;
-        star.y += star.speed * SIN_45;
+        // Calculate a subtle atmospheric perpendicular drift offset using sinusoidal function based on traveled distance
+        const driftOffset = Math.sin(star.distance * star.driftFrequency) * star.driftAmplitude;
+        
+        // Base linear movement coordinates
+        const baseCurrentX = star.x;
+        const baseCurrentY = star.y;
+
+        // Apply perpendicular offset for natural atmospheric fluctuation without changing true heading angle
+        const perpAngle = baseRadians + Math.PI / 2;
+        const currentX = baseCurrentX + Math.cos(perpAngle) * driftOffset;
+        const currentY = baseCurrentY + Math.sin(perpAngle) * driftOffset;
+
+        // Smooth fade-in and fade-out based on travel distance
+        const totalTravel = star.maxDistance;
+        let fadeAlpha = 1;
+        if (star.distance < 60) {
+          fadeAlpha = star.distance / 60;
+        } else if (star.distance > totalTravel - 120) {
+          fadeAlpha = Math.max(0, (totalTravel - star.distance) / 120);
+        }
+
+        ctx.globalAlpha = Math.min(1, Math.max(0, star.opacity * fadeAlpha));
+
+        const { r, g, b } = star.colorObj;
+        ctx.shadowBlur = star.glowIntensity;
+        ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.95)`;
+
+        ctx.lineWidth = star.thickness * star.scale;
+        ctx.beginPath();
+        const effectiveTrailWidth = starWidth * star.scale * (star.trailLength / 35);
+        const tailX = currentX - Math.cos(baseRadians) * effectiveTrailWidth;
+        const tailY = currentY - Math.sin(baseRadians) * effectiveTrailWidth;
+
+        const gradient = ctx.createLinearGradient(currentX, currentY, tailX, tailY);
+        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 1)`);
+        gradient.addColorStop(0.35, `rgba(${r}, ${g}, ${b}, 0.6)`);
+        gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+        ctx.strokeStyle = gradient;
+
+        ctx.moveTo(currentX, currentY);
+        ctx.lineTo(tailX, tailY);
+        ctx.stroke();
+
+        // Premium dual-layer meteor head
+        // 1. Larger colored glow around the core using the meteor's own color
+        ctx.beginPath();
+        ctx.arc(currentX, currentY, star.thickness * star.scale * 2.2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.55)`;
+        ctx.fill();
+
+        // 2. Small bright white core
+        ctx.beginPath();
+        ctx.arc(currentX, currentY, star.thickness * star.scale * 0.95, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, 0.98)`;
+        ctx.fill();
+
+        ctx.restore();
+
+        star.x += Math.cos(baseRadians) * star.speed;
+        star.y += Math.sin(baseRadians) * star.speed;
         star.distance += star.speed;
-        star.scale = 1 + star.distance / 100;
 
-        if (star.x <= limitX && star.y <= limitY) {
-          stars[writeIdx++] = star;
-
-          const rectWidth = 14 * star.scale;
-          const rectHeight = 1.8;
-          const cx = star.x + rectWidth / 2;
-          const cy = star.y + 0.9;
-
-          ctx.save();
-          ctx.translate(cx, cy);
-          ctx.rotate(RAD_45);
-          ctx.scale(star.scale, 1);
-
-          const grad = ctx.createLinearGradient(-7, -0.9, 7, 0.9);
-          grad.addColorStop(0, star.trailColorStop);
-          grad.addColorStop(1, star.starColorStop);
-
-          ctx.fillStyle = grad;
-          ctx.fillRect(-7, -0.9, 14, 1.8);
-          ctx.restore();
+        if (
+          star.x < -150 ||
+          star.x > canvas.width + 150 ||
+          star.y < -150 ||
+          star.y > canvas.height + 150 ||
+          star.distance >= star.maxDistance
+        ) {
+          starsRef.current.splice(i, 1);
         }
       }
-
-      stars.length = writeIdx;
 
       animationFrameId = requestAnimationFrame(render);
     };
@@ -161,17 +243,14 @@ export const ShootingStars = ({ className }: { className?: string }) => {
     animationFrameId = requestAnimationFrame(render);
 
     return () => {
-      if (parent) resizeObserver.unobserve(parent);
-      resizeObserver.disconnect();
-      clearTimeout(timeoutId);
+      window.removeEventListener("resize", updateCanvasSize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [minSpeed, maxSpeed, minDelay, maxDelay, starColor, trailColor, starWidth, starHeight]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={cn("w-full h-full absolute inset-0 pointer-events-none", className)}
-    />
+    <div className={`absolute inset-0 pointer-events-none overflow-hidden ${className}`}>
+      <canvas ref={canvasRef} className="w-full h-full" />
+    </div>
   );
 };

@@ -1,3 +1,4 @@
+// src/components/ui/stars-background.tsx
 "use client";
 
 import { clsx, type ClassValue } from "clsx";
@@ -26,6 +27,7 @@ export const StarsBackground = ({ className }: { className?: string }) => {
     if (!ctx) return;
 
     let stars: Star[] = [];
+    let animationFrameId: number;
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
@@ -63,8 +65,12 @@ export const StarsBackground = ({ className }: { className?: string }) => {
 
     const parent = canvas.parentElement;
 
+    // Debounce resize events using requestAnimationFrame for buttery-smooth performance
     const observer = new ResizeObserver(() => {
-      resize();
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(() => {
+        resize();
+      });
     });
 
     if (parent) {
@@ -72,6 +78,7 @@ export const StarsBackground = ({ className }: { className?: string }) => {
     }
 
     return () => {
+      cancelAnimationFrame(animationFrameId);
       observer.disconnect();
     };
   }, []);
