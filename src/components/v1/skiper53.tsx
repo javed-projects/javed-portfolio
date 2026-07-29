@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { ShieldCheck, ArrowDownRight, ExternalLink, X, Award } from "lucide-react";
 import MagnetLines from '@/components/MagnetLines';
@@ -33,48 +33,18 @@ interface HoverExpand_002Props {
 }
 
 const DigitalCertificatePreview = React.memo(function DigitalCertificatePreview({ image }: { image: Certificate }) {
-  const [imgSrc, setImgSrc] = useState<string | null>(null);
-  const [imgError, setImgError] = useState(false);
-
-  React.useEffect(() => {
-    const saved = localStorage.getItem(`cert_image_${image.code}`);
-    if (saved) {
-      setImgSrc(saved);
-      setImgError(false);
-    } else if (image.src) {
-      setImgSrc(image.src);
-      setImgError(false);
-    } else {
-      setImgSrc(null);
-    }
-
-    const handleUpdate = () => {
-      const updated = localStorage.getItem(`cert_image_${image.code}`);
-      if (updated) {
-        setImgSrc(updated);
-        setImgError(false);
-      } else {
-        setImgSrc(image.src || null);
-        setImgError(false);
-      }
-    };
-    window.addEventListener(`cert_image_updated_${image.code}`, handleUpdate);
-    window.addEventListener("storage", handleUpdate);
-    return () => {
-      window.removeEventListener(`cert_image_updated_${image.code}`, handleUpdate);
-      window.removeEventListener("storage", handleUpdate);
-    };
-  }, [image.code, image.src]);
-
-  if (imgSrc && !imgError) {
+  if (image.src) {
     return (
       <div className="w-full h-full relative overflow-hidden rounded-xl bg-black flex items-center justify-center">
         <img 
-          src={imgSrc} 
+          src={image.src} 
           alt={image.title || image.alt} 
           className="w-full h-full object-contain" 
           referrerPolicy="no-referrer"
-          onError={() => setImgError(true)}
+          loading="lazy"
+          decoding="async"
+          width={560}
+          height={420}
         />
       </div>
     );
@@ -150,28 +120,29 @@ interface CertificateModalProps {
   onClose: () => void;
 }
 
+const MODAL_OVERLAY_INITIAL = { opacity: 0 };
+const MODAL_OVERLAY_ANIMATE = { opacity: 1 };
+const MODAL_OVERLAY_EXIT = { opacity: 0 };
+
+const MODAL_CONTENT_INITIAL = { scale: 0.96, y: 15 };
+const MODAL_CONTENT_ANIMATE = { scale: 1, y: 0 };
+const MODAL_CONTENT_EXIT = { scale: 0.96, y: 15 };
+const MODAL_CONTENT_TRANSITION = {
+  type: "spring" as const,
+  stiffness: 300,
+  damping: 25,
+};
+
 const CertificateModal = React.memo(function CertificateModal({ certificate, onClose }: CertificateModalProps) {
   if (!certificate) return null;
 
-  const [activeImgSrc, setActiveImgSrc] = useState<string | null>(null);
-  const [imgError, setImgError] = useState(false);
-
-  React.useEffect(() => {
-    const saved = localStorage.getItem(`cert_image_${certificate.code}`);
-    if (saved) {
-      setActiveImgSrc(saved);
-    } else if (certificate.src) {
-      setActiveImgSrc(certificate.src);
-    } else {
-      setActiveImgSrc(null);
-    }
-  }, [certificate]);
+  const titleToDisplay = certificate.title || certificate.alt;
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={MODAL_OVERLAY_INITIAL}
+      animate={MODAL_OVERLAY_ANIMATE}
+      exit={MODAL_OVERLAY_EXIT}
       className="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 overflow-y-auto"
       onClick={onClose}
     >
@@ -179,7 +150,7 @@ const CertificateModal = React.memo(function CertificateModal({ certificate, onC
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
           <span className="font-mono text-xs sm:text-sm text-white/80 uppercase tracking-widest font-bold">
-            {certificate.issuer} — {certificate.title || certificate.alt}
+            {certificate.issuer} — {titleToDisplay}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -194,20 +165,23 @@ const CertificateModal = React.memo(function CertificateModal({ certificate, onC
       </div>
 
       <motion.div
-        initial={{ scale: 0.96, y: 15 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.96, y: 15 }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        initial={MODAL_CONTENT_INITIAL}
+        animate={MODAL_CONTENT_ANIMATE}
+        exit={MODAL_CONTENT_EXIT}
+        transition={MODAL_CONTENT_TRANSITION}
         className="w-full max-w-4xl relative shadow-[0_35px_80px_rgba(0,0,0,0.9)] rounded-xl overflow-hidden bg-black border border-white/10 flex items-center justify-center p-2 sm:p-4"
         onClick={(e) => e.stopPropagation()}
       >
-        {activeImgSrc && !imgError ? (
+        {certificate.src ? (
           <img 
-            src={activeImgSrc} 
-            alt={certificate.title || certificate.alt} 
+            src={certificate.src} 
+            alt={titleToDisplay} 
             className="w-full h-auto max-h-[82vh] object-contain rounded-lg"
             referrerPolicy="no-referrer"
-            onError={() => setImgError(true)}
+            loading="lazy"
+            decoding="async"
+            width={1600}
+            height={900}
           />
         ) : (
           <div className="text-white text-sm py-20">Certificate image not found</div>
@@ -217,170 +191,239 @@ const CertificateModal = React.memo(function CertificateModal({ certificate, onC
   );
 });
 
-const HoverExpand_002 = ({
+interface CertificateRowProps {
+  image: Certificate;
+  index: number;
+  isActive: boolean;
+  onClick: (index: number) => void;
+  onHover: (index: number) => void;
+  onOpenModal: (image: Certificate) => void;
+}
+
+const ROW_TRANSITION = {
+  type: "spring" as const,
+  stiffness: 320,
+  damping: 30,
+  mass: 1,
+};
+const EXPANDED_INITIAL = { opacity: 0 };
+const EXPANDED_ANIMATE = { opacity: 1 };
+const EXPANDED_EXIT = { opacity: 0 };
+const EXPANDED_TRANSITION = { duration: 0.15 };
+const EXPANDED_STYLE: React.CSSProperties = { paddingLeft: "1.5rem", willChange: "opacity" };
+
+const CertificateRow = React.memo(function CertificateRow({
+  image,
+  index,
+  isActive,
+  onClick,
+  onHover,
+  onOpenModal,
+}: CertificateRowProps) {
+  const handleClick = useCallback(() => onClick(index), [index, onClick]);
+  const handleHover = useCallback(() => onHover(index), [index, onHover]);
+  const handleOpenClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onOpenModal(image);
+  }, [image, onOpenModal]);
+
+  const titleToDisplay = image.title || image.alt;
+
+  const rowAnimate = useMemo(() => ({ height: isActive ? "18rem" : "4.25rem" }), [isActive]);
+  const rowStyle = useMemo<React.CSSProperties>(() => ({ willChange: isActive ? "height" : "auto" }), [isActive]);
+
+  const actionButtons = useMemo(() => (
+    <div className="mt-4 flex gap-2">
+      <button
+        onClick={handleOpenClick}
+        className="inline-flex items-center gap-1.5 font-mono text-[10px] font-black text-white bg-gradient-to-r from-[#FF529E]/20 to-[#FF529E]/10 hover:from-[#FF529E] hover:to-[#FF529E] hover:text-white px-4 py-2 rounded-full border border-[#FF529E]/30 hover:border-[#FF529E] transition-all duration-300 uppercase tracking-widest shadow-md cursor-pointer"
+      >
+        <span>Open Certificate</span>
+        <Award className="w-3 h-3" />
+      </button>
+      
+      {image.verifyUrl && (
+        <a
+          href={image.verifyUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 font-mono text-[10px] font-black text-white/60 bg-white/5 hover:bg-white hover:text-black px-4 py-2 rounded-full border border-white/15 hover:border-white transition-all duration-300 uppercase tracking-widest shadow-md"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span>Verify</span>
+          <ExternalLink className="w-3 h-3" />
+        </a>
+      )}
+    </div>
+  ), [handleOpenClick, image.verifyUrl]);
+
+  return (
+    <motion.div
+      className={cn(
+        "group relative cursor-pointer overflow-hidden rounded-[34px] border backdrop-blur-md transition-colors duration-300",
+        isActive 
+          ? "border-[#FF529E]/60 bg-black/40 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),_0_0_35px_rgba(255,82,158,0.18)]" 
+          : "border-white/10 bg-[#0e0e0e]/15 hover:border-white/25 hover:bg-[#0e0e0e]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
+      )}
+      initial={{ height: "4.25rem" }}
+      animate={rowAnimate}
+      transition={ROW_TRANSITION}
+      style={rowStyle}
+      onClick={handleClick}
+      onHoverStart={handleHover}
+    >
+      {isActive && (
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-100 transition-opacity duration-300">
+          <MagnetLines
+            rows={8}
+            columns={18}
+            containerSize="100%"
+            lineColor="rgba(255, 255, 255, 0.22)"
+            lineWidth="1.5px"
+            lineHeight="14px"
+            baseAngle={45}
+          />
+        </div>
+      )}
+
+      <div className="absolute top-0 inset-x-0 h-[4.25rem] w-full flex items-center justify-between z-20 pointer-events-none">
+        <div className="flex items-center gap-3 sm:gap-4 translate-x-4 sm:translate-x-6">
+          <span className={cn(
+            "font-mono text-xs font-bold transition-colors duration-300",
+            isActive ? "text-[#FF529E]" : "text-white/30"
+          )}>
+            {(index + 1).toString().padStart(2, "0")}
+          </span>
+          <span className={cn(
+            "font-mono text-[9px] sm:text-[10px] font-black tracking-widest uppercase border px-2 py-0.5 rounded transition-all duration-300",
+            isActive 
+              ? "bg-[#FF529E]/20 text-[#FF529E] border-[#FF529E]/30" 
+              : "bg-white/5 text-white/60 border-white/10 group-hover:text-white group-hover:border-white/20"
+          )}>
+            {image.code}
+          </span>
+          <h4 className={cn(
+            "text-xs sm:text-base font-black uppercase tracking-wide truncate max-w-[150px] sm:max-w-md transition-colors duration-300",
+            isActive ? "text-white" : "text-white/60 group-hover:text-white/90"
+          )}>
+            {titleToDisplay}
+          </h4>
+        </div>
+
+        <div className="flex items-center gap-3 -translate-x-4 sm:-translate-x-6 pointer-events-auto">
+          {image.issuer && (
+            <span className="hidden sm:inline-block font-mono text-[10px] text-white/30 uppercase tracking-widest">
+              {image.issuer}
+            </span>
+          )}
+          <div className={cn(
+            "w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300",
+            isActive 
+              ? "border-[#FF529E]/30 bg-[#FF529E]/10 text-[#FF529E]" 
+              : "border-white/10 text-white/40 group-hover:text-white/70"
+          )}>
+            <ArrowDownRight className={cn("w-3.5 h-3.5 transition-transform duration-300", isActive && "-rotate-90 text-[#FF529E]")} />
+          </div>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {isActive && (
+          <motion.div
+            initial={EXPANDED_INITIAL}
+            animate={EXPANDED_ANIMATE}
+            exit={EXPANDED_EXIT}
+            transition={EXPANDED_TRANSITION}
+            style={EXPANDED_STYLE} 
+            className="absolute inset-x-0 top-[4.25rem] pr-6 pt-3 flex flex-col sm:flex-row items-center justify-start gap-6 sm:gap-10 z-10"
+          >
+            <div 
+              className="w-full sm:w-[14rem] aspect-[4/3] rounded-2xl overflow-hidden bg-black/60 border border-white/20 flex items-center justify-center shrink-0 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:scale-105 hover:border-[#FF529E]/50 transition-all duration-300 relative group/preview cursor-pointer"
+              onClick={handleOpenClick}
+            >
+              <DigitalCertificatePreview image={image} />
+            </div>
+
+            <div className="flex-none max-w-md md:max-w-lg flex flex-col justify-center text-left w-full sm:pl-4">
+              {image.issuer && (
+                <span className="font-mono text-[9px] sm:text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mb-1">
+                  {image.issuer}
+                </span>
+              )}
+              <h5 className="text-sm sm:text-md md:text-lg font-black text-white uppercase tracking-wide leading-tight line-clamp-2">
+                {image.alt}
+              </h5>
+              
+              <div className="flex items-center gap-2 mt-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[9px] sm:text-[10px] font-mono font-black text-emerald-400 tracking-widest uppercase flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" /> SECURED & VERIFIED
+                </span>
+              </div>
+
+              {actionButtons}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}, (prev, next) => prev.image === next.image && prev.isActive === next.isActive);
+
+const CONTAINER_INITIAL = { opacity: 0, y: 20 };
+const CONTAINER_ANIMATE = { opacity: 1, y: 0 };
+const CONTAINER_TRANSITION = {
+  duration: 0.4,
+  ease: "easeOut" as const,
+};
+
+const HoverExpand_002 = React.memo(function HoverExpand_002({
   images,
   className,
-}: HoverExpand_002Props) => {
+}: HoverExpand_002Props) {
   const [activeImage, setActiveImage] = useState<number | null>(0);
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
+
+  const handleRowClick = useCallback((index: number) => {
+    setActiveImage(index);
+  }, []);
+
+  const handleRowHover = useCallback((index: number) => {
+    setActiveImage(index);
+  }, []);
+
+  const handleOpenModal = useCallback((cert: Certificate) => {
+    setSelectedCert(cert);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedCert(null);
+  }, []);
+
+  const renderedRows = useMemo(() => {
+    return images.map((image, index) => (
+      <CertificateRow
+        key={image.code || index}
+        image={image}
+        index={index}
+        isActive={activeImage === index}
+        onClick={handleRowClick}
+        onHover={handleRowHover}
+        onOpenModal={handleOpenModal}
+      />
+    ));
+  }, [images, activeImage, handleRowClick, handleRowHover, handleOpenModal]);
 
   return (
     <>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        initial={CONTAINER_INITIAL}
+        animate={CONTAINER_ANIMATE}
+        transition={CONTAINER_TRANSITION}
         className={cn("relative w-full max-w-4xl mx-auto px-4", className)}
       >
         <div className="flex w-full flex-col gap-3">
-          {images.map((image, index) => {
-            const isActive = activeImage === index;
-            return (
-              <motion.div
-                key={index}
-                className={cn(
-                  "group relative cursor-pointer overflow-hidden rounded-[34px] border backdrop-blur-md transition-colors duration-300",
-                  isActive 
-                    ? "border-[#FF529E]/60 bg-black/40 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),_0_0_35px_rgba(255,82,158,0.18)]" 
-                    : "border-white/10 bg-[#0e0e0e]/15 hover:border-white/25 hover:bg-[#0e0e0e]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
-                )}
-                initial={{ height: "4.25rem" }}
-                animate={{
-                  height: isActive ? "18rem" : "4.25rem",
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 320,
-                  damping: 30,
-                  mass: 1,
-                }}
-                onClick={() => setActiveImage(index)}
-                onHoverStart={() => setActiveImage(index)}
-              >
-                {isActive && (
-                  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-100 transition-opacity duration-300">
-                    <MagnetLines
-                      rows={8}
-                      columns={18}
-                      containerSize="100%"
-                      lineColor="rgba(255, 255, 255, 0.22)"
-                      lineWidth="1.5px"
-                      lineHeight="14px"
-                      baseAngle={45}
-                    />
-                  </div>
-                )}
-
-                <div className="absolute top-0 inset-x-0 h-[4.25rem] w-full flex items-center justify-between z-20 pointer-events-none">
-                  <div className="flex items-center gap-3 sm:gap-4 translate-x-4 sm:translate-x-6">
-                    <span className={cn(
-                      "font-mono text-xs font-bold transition-colors duration-300",
-                      isActive ? "text-[#FF529E]" : "text-white/30"
-                    )}>
-                      {(index + 1).toString().padStart(2, "0")}
-                    </span>
-                    <span className={cn(
-                      "font-mono text-[9px] sm:text-[10px] font-black tracking-widest uppercase border px-2 py-0.5 rounded transition-all duration-300",
-                      isActive 
-                        ? "bg-[#FF529E]/20 text-[#FF529E] border-[#FF529E]/30" 
-                        : "bg-white/5 text-white/60 border-white/10 group-hover:text-white group-hover:border-white/20"
-                    )}>
-                      {image.code}
-                    </span>
-                    <h4 className={cn(
-                      "text-xs sm:text-base font-black uppercase tracking-wide truncate max-w-[150px] sm:max-w-md transition-colors duration-300",
-                      isActive ? "text-white" : "text-white/60 group-hover:text-white/90"
-                    )}>
-                      {image.title || image.alt}
-                    </h4>
-                  </div>
-
-                  <div className="flex items-center gap-3 -translate-x-4 sm:-translate-x-6 pointer-events-auto">
-                    {image.issuer && (
-                      <span className="hidden sm:inline-block font-mono text-[10px] text-white/30 uppercase tracking-widest">
-                        {image.issuer}
-                      </span>
-                    )}
-                    <div className={cn(
-                      "w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300",
-                      isActive 
-                        ? "border-[#FF529E]/30 bg-[#FF529E]/10 text-[#FF529E]" 
-                        : "border-white/10 text-white/40 group-hover:text-white/70"
-                    )}>
-                      <ArrowDownRight className={cn("w-3.5 h-3.5 transition-transform duration-300", isActive && "-rotate-90 text-[#FF529E]")} />
-                    </div>
-                  </div>
-                </div>
-
-                <AnimatePresence>
-                  {isActive && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                      style={{ paddingLeft: "1.5rem" }} 
-                      className="absolute inset-x-0 top-[4.25rem] pr-6 pt-3 flex flex-col sm:flex-row items-center justify-start gap-6 sm:gap-10 z-10"
-                    >
-                      <div 
-                        className="w-full sm:w-[14rem] aspect-[4/3] rounded-2xl overflow-hidden bg-black/60 border border-white/20 flex items-center justify-center shrink-0 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:scale-105 hover:border-[#FF529E]/50 transition-all duration-300 relative group/preview cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedCert(image);
-                        }}
-                      >
-                        <DigitalCertificatePreview image={image} />
-                      </div>
-
-                      <div className="flex-none max-w-md md:max-w-lg flex flex-col justify-center text-left w-full sm:pl-4">
-                        {image.issuer && (
-                          <span className="font-mono text-[9px] sm:text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mb-1">
-                            {image.issuer}
-                          </span>
-                        )}
-                        <h5 className="text-sm sm:text-md md:text-lg font-black text-white uppercase tracking-wide leading-tight line-clamp-2">
-                          {image.alt}
-                        </h5>
-                        
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                          <span className="text-[9px] sm:text-[10px] font-mono font-black text-emerald-400 tracking-widest uppercase flex items-center gap-1">
-                            <ShieldCheck className="w-3.5 h-3.5" /> SECURED & VERIFIED
-                          </span>
-                        </div>
-
-                        <div className="mt-4 flex gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedCert(image);
-                            }}
-                            className="inline-flex items-center gap-1.5 font-mono text-[10px] font-black text-white bg-gradient-to-r from-[#FF529E]/20 to-[#FF529E]/10 hover:from-[#FF529E] hover:to-[#FF529E] hover:text-white px-4 py-2 rounded-full border border-[#FF529E]/30 hover:border-[#FF529E] transition-all duration-300 uppercase tracking-widest shadow-md cursor-pointer"
-                          >
-                            <span>Open Certificate</span>
-                            <Award className="w-3 h-3" />
-                          </button>
-                          
-                          {image.verifyUrl && (
-                            <a
-                              href={image.verifyUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 font-mono text-[10px] font-black text-white/60 bg-white/5 hover:bg-white hover:text-black px-4 py-2 rounded-full border border-white/15 hover:border-white transition-all duration-300 uppercase tracking-widest shadow-md"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <span>Verify</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
+          {renderedRows}
         </div>
       </motion.div>
 
@@ -388,12 +431,12 @@ const HoverExpand_002 = ({
         {selectedCert && (
           <CertificateModal
             certificate={selectedCert}
-            onClose={() => setSelectedCert(null)}
+            onClose={handleCloseModal}
           />
         )}
       </AnimatePresence>
     </>
   );
-};
+});
 
 export { HoverExpand_002 };

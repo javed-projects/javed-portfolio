@@ -1,5 +1,5 @@
 // src/components/HeroSection.tsx
-import React from 'react';
+import React, { useCallback } from 'react';
 import ContactButton from './ContactButton';
 import FadeIn from './FadeIn';
 import Magnet from './Magnet';
@@ -7,14 +7,14 @@ import ScrollFadeElement from './ScrollFadeElement';
 import { StarsBackground } from './ui/stars-background';
 import { ShootingStars } from './ui/shooting-stars';
 
-export default function HeroSection() {
-  const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+const HeroSection = React.memo(function HeroSection() {
+  const handleContactClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const element = document.getElementById('contact');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }, []);
 
   return (
     <section id="hero" className="relative h-screen flex flex-col justify-between overflow-x-clip bg-transparent select-none">
@@ -43,7 +43,11 @@ export default function HeroSection() {
                 alt="Javed - 3D Creator Portrait"
                 className="w-full h-auto object-contain select-none pointer-events-none bg-transparent drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]"
                 referrerPolicy="no-referrer"
-                style={{ backgroundColor: 'transparent', imageRendering: 'auto' }}
+                loading="eager"
+                decoding="async"
+                width={1254}
+                height={1254}
+                style={{ imageRendering: 'auto' }}
               />
             </Magnet>
           </FadeIn>
@@ -90,4 +94,6 @@ export default function HeroSection() {
       </div>
     </section>
   );
-}
+});
+
+export default HeroSection;
