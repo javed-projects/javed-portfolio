@@ -1,7 +1,8 @@
+// src/components/ui/hover-expand-002.tsx
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { ShieldCheck, ArrowDownRight, ExternalLink, X, Award } from "lucide-react";
 
@@ -30,6 +31,114 @@ interface HoverExpand_002Props {
   images: Certificate[];
   className?: string;
 }
+
+/* --- ORIGINAL REACT BITS MAGNET LINES COMPONENT (BRIGHTNESS ADJUSTED) --- */
+const MagnetLines = React.memo(function MagnetLines({
+  rows = 7,
+  columns = 16,
+  containerSize = "100%",
+  lineColor = "rgba(255, 255, 255, 0.24)", // Increased brightness for better visibility
+  lineWidth = "2px",
+  lineHeight = "12px",
+  baseAngle = -45,
+}: {
+  rows?: number;
+  columns?: number;
+  containerSize?: string;
+  lineColor?: string;
+  lineWidth?: string;
+  lineHeight?: string;
+  baseAngle?: number;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const items = container.querySelectorAll("span");
+    let animationFrameId: number;
+    let lastX = -1000;
+    let lastY = -1000;
+    let ticking = false;
+
+    const onPointerMove = (e: PointerEvent) => {
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      if (!ticking) {
+        ticking = true;
+        animationFrameId = requestAnimationFrame(() => {
+          items.forEach((item) => {
+            const rect = item.getBoundingClientRect();
+            const centerX = rect.x + rect.width / 2;
+            const centerY = rect.y + rect.height / 2;
+
+            const b = lastX - centerX;
+            const a = lastY - centerY;
+            const c = Math.sqrt(a * a + b * b) || 1;
+            const r = ((Math.acos(b / c) * 180) / Math.PI) * (lastY > centerY ? 1 : -1);
+
+            item.style.setProperty("--rotate", `${r}deg`);
+          });
+          ticking = false;
+        });
+      }
+    };
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+
+    if (items.length) {
+      const middleIndex = Math.floor(items.length / 2);
+      const rect = items[middleIndex].getBoundingClientRect();
+      onPointerMove({ clientX: rect.x, clientY: rect.y } as PointerEvent);
+    }
+
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
+  }, [rows, columns]);
+
+  const total = rows * columns;
+  const spans = useMemo(() => {
+    return Array.from({ length: total }, (_, i) => (
+      <span
+        key={i}
+        style={
+          {
+            display: "block",
+            transformOrigin: "center",
+            willChange: "transform",
+            transform: "rotate(var(--rotate))",
+            backgroundColor: lineColor,
+            width: lineWidth,
+            height: lineHeight,
+            transition: "transform 0.1s ease-out",
+          } as React.CSSProperties
+        }
+      />
+    ));
+  }, [total, lineColor, lineWidth, lineHeight]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
+      style={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+        gridTemplateRows: `repeat(${rows}, 1fr)`,
+        width: containerSize,
+        height: containerSize,
+        justifyItems: "center",
+        alignItems: "center",
+      }}
+    >
+      {spans}
+    </div>
+  );
+});
 
 const DigitalCertificatePreview = React.memo(function DigitalCertificatePreview({ image }: { image: Certificate }) {
   if (image.src) {
@@ -271,10 +380,8 @@ const CertificateRow = React.memo(function CertificateRow({
       onClick={handleClick}
       onHoverStart={handleHover}
     >
-      {/* Lightweight glowing accent instead of heavy MagnetLines animation */}
-      {isActive && (
-        <div className="absolute inset-0 pointer-events-none z-0 bg-gradient-to-r from-[#FF529E]/10 via-transparent to-transparent opacity-80" />
-      )}
+      {/* MagnetLines with slightly increased brightness */}
+      {isActive && <MagnetLines rows={6} columns={14} baseAngle={-45} lineColor="rgba(255, 255, 255, 0.24)" lineWidth="1.5px" lineHeight="12px" />}
 
       <div className="absolute top-0 inset-x-0 h-[4.25rem] w-full flex items-center justify-between z-20 pointer-events-none">
         <div className="flex items-center gap-3 sm:gap-4 translate-x-4 sm:translate-x-6">
