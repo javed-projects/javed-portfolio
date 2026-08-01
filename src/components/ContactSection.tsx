@@ -48,8 +48,8 @@ export default function ContactSection() {
         <div className="flex flex-col items-center justify-center w-full gap-2 mt-4 pointer-events-none">
           <div className="w-full relative flex flex-col md:flex-row items-center justify-center min-h-[5rem]">
             
-            {/* Social Flip Group */}
-            <div className="flex flex-col items-center justify-center w-full pointer-events-none md:translate-x-16 gap-2">
+            {/* Social Flip Group - Shifted slightly more to the right */}
+            <div className="flex flex-col items-center justify-center w-full pointer-events-none md:translate-x-14 gap-2">
               <FadeIn delay={0.25} y={15} as="div" className="w-full text-center pointer-events-none">
                 <span className="text-xs uppercase tracking-[0.25em] text-[#D7E2EA]/40 font-semibold block text-center pointer-events-none">
                   Let&apos;s Connect
@@ -60,8 +60,8 @@ export default function ContactSection() {
               </div>
             </div>
 
-            {/* CV Button with increased padding and font size */}
-            <div className="w-full md:w-auto mt-6 md:mt-0 md:absolute md:right-0 md:top-1/2 md:-translate-y-[10%] flex justify-center pointer-events-none">
+            {/* CV Button */}
+            <div className="w-full md:w-auto mt-6 md:mt-0 md:absolute md:right-10 md:top-1/2 md:-translate-y-[10%] flex justify-center pointer-events-none">
               <FadeIn delay={0.35} y={20} as="div" className="shrink-0 pointer-events-auto">
                 <a
                   href="/Javed_CV.pdf"
@@ -70,8 +70,8 @@ export default function ContactSection() {
                   className="relative group inline-block focus:outline-none cursor-pointer"
                 >
                   <span className="absolute inset-0 w-full h-full rounded-md bg-[#2D2D2D] translate-y-[8px] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:translate-y-[10px] group-active:translate-y-[2px] border-b border-black/40" />
-                  <span className="relative block px-14 py-4.5 sm:px-20 sm:py-5 text-center text-[18px] sm:text-[20px] font-bold tracking-wider uppercase text-white bg-gradient-to-b from-[#FFAED7] to-[#FF529E] border border-white/20 rounded-md transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] translate-y-0 group-hover:-translate-y-[3px] group-active:translate-y-[6px] select-none shadow-[inset_0_1.5px_1.5px_rgba(255,255,255,0.7),0_10px_20px_rgba(255,82,158,0.2)]">
-                  CV
+                  <span className="relative block px-14 py-[18px] sm:px-20 sm:py-5 text-center text-[18px] sm:text-[20px] font-bold tracking-wider uppercase text-white bg-gradient-to-b from-[#FFAED7] to-[#FF529E] border border-white/20 rounded-md transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] translate-y-0 group-hover:-translate-y-[3px] group-active:translate-y-[6px] select-none shadow-[inset_0_1.5px_1.5px_rgba(255,255,255,0.7),0_10px_20px_rgba(255,82,158,0.2)]">
+                    CV
                   </span>
                 </a>
               </FadeIn>
