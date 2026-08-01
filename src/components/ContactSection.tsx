@@ -48,6 +48,7 @@ export default function ContactSection() {
         <div className="flex flex-col items-center justify-center w-full gap-2 mt-4 pointer-events-none">
           <div className="w-full relative flex flex-col md:flex-row items-center justify-center min-h-[5rem]">
             
+            {/* Social Flip Group */}
             <div className="flex flex-col items-center justify-center w-full pointer-events-none md:translate-x-16 gap-2">
               <FadeIn delay={0.25} y={15} as="div" className="w-full text-center pointer-events-none">
                 <span className="text-xs uppercase tracking-[0.25em] text-[#D7E2EA]/40 font-semibold block text-center pointer-events-none">
@@ -59,7 +60,8 @@ export default function ContactSection() {
               </div>
             </div>
 
-            <div className="w-full md:w-auto mt-6 md:mt-0 md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 flex justify-center pointer-events-none">
+            {/* CV Button shifted further down using -translate-y-[10%] for cleaner row alignment */}
+            <div className="w-full md:w-auto mt-6 md:mt-0 md:absolute md:right-0 md:top-1/2 md:-translate-y-[10%] flex justify-center pointer-events-none">
               <FadeIn delay={0.35} y={20} as="div" className="shrink-0 pointer-events-auto">
                 <a
                   href="/Javed_CV.pdf"
