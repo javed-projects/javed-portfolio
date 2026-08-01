@@ -793,9 +793,9 @@ export default function InternshipsSection() {
               <h2 className="hero-heading font-black uppercase leading-[1.1] tracking-normal text-[clamp(2.5rem,8vw,120px)] text-[#D7E2EA]">
                 Virtual Internships
               </h2>
-              <p className="text-[#D7E2EA] hero-heading font-black tracking-[0.15em] uppercase text-[15px] sm:text-[18px] mt-6">
-                & Job Simulations
-              </p>
+              <p className="text-[#D7E2EA] hero-heading font-black tracking-[0.15em] uppercase text-[22px] sm:text-[32px] mt-6">
+  & Job Simulations
+</p>
             </ScrollFadeElement>
           </FadeIn>
         </div>

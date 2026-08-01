@@ -5,8 +5,6 @@ import ScrollFadeElement from './ScrollFadeElement';
 import SocialFlipButton from './SocialFlipButton';
 import FadeIn from './FadeIn';
 import { Boxes } from '@/components/ui/background-boxes';
-import { StarsBackground } from './ui/stars-background';
-import { ShootingStars } from './ui/shooting-stars';
 
 export default function ContactSection() {
   const handleScrollToTop = () => {
@@ -16,19 +14,10 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="bg-[#0C0C0C] text-[#D7E2EA] px-6 md:px-12 pt-24 pb-16 sm:pt-32 sm:pb-24 relative z-30 border-t border-[#D7E2EA]/10 overflow-hidden min-h-[50vh]"
+      className="bg-transparent text-[#D7E2EA] px-6 md:px-12 pt-24 pb-16 sm:pt-32 sm:pb-24 relative z-30 border-t border-[#D7E2EA]/10 overflow-hidden min-h-[50vh]"
     >
-      {/* 1. Static Star Field Canvas Background */}
-      <StarsBackground className="z-0 opacity-70" />
-
-      {/* 2. Background 3D Grid Boxes Effect */}
+      {/* Background 3D Grid Boxes Effect */}
       <Boxes className="z-0" />
-
-      {/* 3. Meteor Shower Effect */}
-      <ShootingStars className="pointer-events-none z-10 opacity-90" />
-
-      {/* Vignette Overlay */}
-      <div className="absolute inset-0 w-full h-full bg-[#0C0C0C]/40 z-10 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,transparent_65%,white_100%)] opacity-80" />
 
       {/* Main Content Stack */}
       <div className="max-w-6xl mx-auto flex flex-col justify-between min-h-[50vh] gap-16 relative z-20 pointer-events-none">
@@ -44,13 +33,13 @@ export default function ContactSection() {
 
           <FadeIn delay={0.15} y={30} as="div" className="w-full flex justify-start pl-4 sm:pl-10 md:pl-16 pointer-events-none">
             <div className="flex flex-col gap-2 items-start text-left">
-              <span className="text-xs uppercase tracking-widest text-[#D7E2EA]/40 pointer-events-none">Primary Email</span>
+              <span className="text-sm sm:text-base font-semibold uppercase tracking-widest text-[#D7E2EA] pointer-events-none">Primary Email</span>
               <a
                 href="mailto:mdj32807@gmail.com"
-                className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#D7E2EA] hover:text-[#B600A8] transition-colors duration-300 flex items-center justify-start gap-3 pointer-events-auto"
+                className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#D7E2EA] hover:text-[#B600A8] transition-all duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] flex items-center justify-start gap-3 pointer-events-auto group"
               >
                 mdj32807@gmail.com
-                <ArrowUpRight className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 opacity-60" />
+                <ArrowUpRight className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 opacity-60 transition-transform duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:translate-x-1 group-hover:-translate-y-1" />
               </a>
             </div>
           </FadeIn>
@@ -78,8 +67,8 @@ export default function ContactSection() {
                   rel="noopener noreferrer"
                   className="relative group inline-block focus:outline-none cursor-pointer"
                 >
-                  <span className="absolute inset-0 w-full h-full rounded-md bg-[#2D2D2D] translate-y-[8px] transition-all duration-100 group-hover:translate-y-[10px] group-active:translate-y-[2px] border-b border-black/40" />
-                  <span className="relative block px-8 py-3 sm:px-10 sm:py-3.5 text-center text-[14px] sm:text-[16px] font-bold tracking-wider uppercase text-white bg-gradient-to-b from-[#FFAED7] to-[#FF529E] border border-white/20 rounded-md transition-all duration-100 translate-y-0 group-hover:-translate-y-[3px] group-active:translate-y-[6px] select-none shadow-[inset_0_1.5px_1.5px_rgba(255,255,255,0.7),0_10px_20px_rgba(255,82,158,0.2)]">
+                  <span className="absolute inset-0 w-full h-full rounded-md bg-[#2D2D2D] translate-y-[8px] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:translate-y-[10px] group-active:translate-y-[2px] border-b border-black/40" />
+                  <span className="relative block px-8 py-3 sm:px-10 sm:py-3.5 text-center text-[14px] sm:text-[16px] font-bold tracking-wider uppercase text-white bg-gradient-to-b from-[#FFAED7] to-[#FF529E] border border-white/20 rounded-md transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] translate-y-0 group-hover:-translate-y-[3px] group-active:translate-y-[6px] select-none shadow-[inset_0_1.5px_1.5px_rgba(255,255,255,0.7),0_10px_20px_rgba(255,82,158,0.2)]">
                     CV
                   </span>
                 </a>
@@ -93,10 +82,10 @@ export default function ContactSection() {
             <span className="pointer-events-none">&copy; {new Date().getFullYear()} JAVED. ALL RIGHTS RESERVED.</span>
             <button
               onClick={handleScrollToTop}
-              className="flex items-center gap-1.5 hover:text-[#D7E2EA] transition-colors duration-200 font-medium uppercase tracking-widest cursor-pointer pointer-events-auto"
+              className="flex items-center gap-1.5 hover:text-[#D7E2EA] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] font-medium uppercase tracking-widest cursor-pointer pointer-events-auto group"
             >
               Back to Top
-              <ArrowUpRight className="w-4 h-4" />
+              <ArrowUpRight className="w-4 h-4 transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
           </FadeIn>
         </div>

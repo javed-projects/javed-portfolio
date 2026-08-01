@@ -1,3 +1,4 @@
+"use client";
 import { motion, AnimatePresence } from "motion/react";
 import React, { useState } from "react";
 import {
@@ -111,20 +112,24 @@ const SocialFlipNode = ({
             stiffness: 150,
             damping: 18,
           }}
-          style={{ transformStyle: "preserve-3d" }}
+          style={{
+            transformStyle: "preserve-3d",
+            willChange: "transform",
+            transform: "translateZ(0)",
+          }}
         >
-          {/* Front - Letter (Slightly lightened background) */}
+          {/* Front - Letter */}
           <div
             className={cn(
               "absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-50 text-lg font-bold text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-neutral-100 border border-neutral-200 dark:border-neutral-600",
               frontClassName
             )}
-            style={{ backfaceVisibility: "hidden" }}
+            style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
           >
             {item.letter}
           </div>
 
-          {/* Back - Icon (Slightly lightened background) */}
+          {/* Back - Icon */}
           <div
             className={cn(
               "absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-700 text-lg text-white dark:bg-neutral-100 dark:text-black border border-neutral-600 dark:border-neutral-200",
@@ -132,7 +137,8 @@ const SocialFlipNode = ({
             )}
             style={{
               backfaceVisibility: "hidden",
-              transform: "rotateY(180deg)",
+              WebkitBackfaceVisibility: "hidden",
+              transform: "rotateY(180deg) translateZ(0)",
             }}
           >
             {item.icon}
