@@ -71,7 +71,7 @@ export default function ContactSection() {
                 >
                   <span className="absolute inset-0 w-full h-full rounded-md bg-[#2D2D2D] translate-y-[8px] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:translate-y-[10px] group-active:translate-y-[2px] border-b border-black/40" />
                   <span className="relative block px-14 py-4.5 sm:px-20 sm:py-5 text-center text-[18px] sm:text-[20px] font-bold tracking-wider uppercase text-white bg-gradient-to-b from-[#FFAED7] to-[#FF529E] border border-white/20 rounded-md transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] translate-y-0 group-hover:-translate-y-[3px] group-active:translate-y-[6px] select-none shadow-[inset_0_1.5px_1.5px_rgba(255,255,255,0.7),0_10px_20px_rgba(255,82,158,0.2)]">
-                    CV
+                    hello
                   </span>
                 </a>
               </FadeIn>
