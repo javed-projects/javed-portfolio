@@ -134,7 +134,7 @@ html, body, #root {
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  --popover-foreground: oklch(0.205 0 0);
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
@@ -172,4 +172,20 @@ html, body, #root {
   html {
     @apply font-sans;
   }
+}
+
+/* ==========================================
+   DIRECT OVERRIDES FOR CAROUSEL CARD TEXT
+   ========================================== */
+
+/* Force left padding on carousel card text overlays */
+#projects .perspective-carousel h3,
+#projects .perspective-carousel span {
+  padding-left: 20px !important;
+}
+
+/* Ensure bottom container has right padding and offset */
+#projects .perspective-carousel div[class*="absolute"][class*="bottom"] {
+  padding-left: 20px !important;
+  padding-right: 16px !important;
 }

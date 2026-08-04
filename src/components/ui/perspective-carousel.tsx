@@ -43,11 +43,6 @@ const CarouselCard = React.memo(function CarouselCard({
   const absOffset = Math.abs(offset);
 
   // Calculate dynamic transforms to form a perfect C-curve facing inward
-  // Matching user image exactly:
-  // - Left side rotates clockwise around Y (rotateY > 0)
-  // - Right side rotates counter-clockwise around Y (rotateY < 0)
-  // - Center is flat (rotateY = 0)
-  // We use rotateY, scale, and translateX, and omit deep translateZ to prevent browser 3D hit-testing bugs
   const rotateY = offset * -18;
   const translateX = offset * (slideWidth * 0.72);
   const scale = 1 - Math.min(absOffset * 0.12, 0.35);
@@ -111,8 +106,8 @@ const CarouselCard = React.memo(function CarouselCard({
           />
         )}
 
-        {/* Text Details overlay with subtle asymmetrical rightward padding shift */}
-        <div className="absolute bottom-0 left-0 right-0 pt-8 pb-3 pr-3 pl-5.5 sm:pb-3.5 sm:pr-3.5 sm:pl-7 md:pb-4 md:pr-4 md:pl-8 flex flex-col justify-end bg-gradient-to-t from-black/95 via-black/70 to-transparent">
+        {/* Text Details overlay with fixed valid padding */}
+        <div className="absolute bottom-2 left-2 right-0 pt-8 pb-4 pr-3 pl-[22px] sm:bottom-2 sm:pb-4 sm:pr-3.5 sm:pl-7 md:bottom-2 md:pb-5 md:pr-4 md:pl-8 flex flex-col justify-end bg-gradient-to-t from-black/95 via-black/70 to-transparent">
           {item.category && (
             <span className="text-[8.5px] sm:text-[9.5px] md:text-[10.5px] font-mono uppercase tracking-wider text-white/40 mb-1">
               {item.category}
@@ -196,7 +191,7 @@ export const PerspectiveCarousel = React.memo(function PerspectiveCarousel({
     <div
       className={`relative w-full flex flex-col items-center justify-between overflow-hidden py-6 px-4 select-none ${className}`}
     >
-      {/* 3D Track Viewport (dynamically sized to match the cards exactly to prevent any overflow or overlap) */}
+      {/* 3D Track Viewport */}
       <div 
         className="relative w-full flex items-center justify-center z-10"
         style={{ 
@@ -212,7 +207,7 @@ export const PerspectiveCarousel = React.memo(function PerspectiveCarousel({
         </div>
       </div>
 
-      {/* Navigation Controls (positioned cleanly beneath the 3D cards viewport with safe spacing) */}
+      {/* Navigation Controls */}
       <div className="relative z-10 flex items-center gap-4 mt-8 z-30">
         <div className="flex gap-1.5">
           {renderedDots}
